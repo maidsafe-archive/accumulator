@@ -1,0 +1,12 @@
+*.exe
+*.lock
+*.swp
+tags*
+bootstrap.cache
+build/
+build-tests/
+target/
+/.idea
+/.project
+/bin
+*.sublime-*
