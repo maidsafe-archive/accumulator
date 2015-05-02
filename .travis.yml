@@ -8,8 +8,8 @@ rust:
 sudo: true
 branches:
   only:
-      - master
-      - gh-pages
+  - master
+  - gh-pages
 script:
 - cargo build --verbose
 - cargo test --verbose
@@ -33,3 +33,6 @@ after_success: |
   sudo make install &&
   cd ../.. &&
   kcov --coveralls-id=$TRAVIS_JOB_ID --exclude-pattern=/.cargo target/kcov target/debug/routing-*;
+env:
+  global:
+    secure: LFLXKXr1nFmccFp3fNCW53tBofALGrC6LBtX3TSpx607JvQ+qS4ERjeTyHnrXNVbe1AClQ8jQETM8YlyQaxbl+OreiXZ4yZbpDGud+vz8EsZU+3wrXDUl8s9B96WGtj0biowHQubPFh/+NdDzBkqnn9TjDJIwbG8l1rvyimXmrA=
