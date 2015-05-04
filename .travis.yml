@@ -3,7 +3,6 @@ language: rust
 sudo: required
 
 rust:
-  - nightly
   - beta
 
 before_script:
@@ -24,5 +23,4 @@ after_success:
 
 env:
   global:
-  - TRAVIS_CARGO_NIGHTLY_FEATURE=nightly
   - secure: LFLXKXr1nFmccFp3fNCW53tBofALGrC6LBtX3TSpx607JvQ+qS4ERjeTyHnrXNVbe1AClQ8jQETM8YlyQaxbl+OreiXZ4yZbpDGud+vz8EsZU+3wrXDUl8s9B96WGtj0biowHQubPFh/+NdDzBkqnn9TjDJIwbG8l1rvyimXmrA=
