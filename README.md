@@ -14,3 +14,6 @@ A container that will accept key value pairs until a size is reached
 None
 
 ##Todo Items
+
+- [ ] Add time point to allow removal of old items (save memory leak)
+- [ ] API version 1.0.0
