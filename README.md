@@ -1,5 +1,7 @@
 # Accumulator
 
+**Primary Maintainer:**     Chandra Prakash (prakash@maidsafe.net)
+
 A container that will accept key value pairs until a size is reached
 
 |Crate|Travis|Windows|OSX|Coverage|
