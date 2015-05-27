@@ -18,7 +18,7 @@
        html_favicon_url = "http://maidsafe.net/img/favicon.ico",
               html_root_url = "http://dirvine.github.io/accumulator")]
 #![forbid(bad_style, missing_docs, warnings)]
-#![deny(deprecated, drop_with_repr_extern, improper_ctypes, non_shorthand_field_patterns,
+#![deny(deprecated, improper_ctypes, non_shorthand_field_patterns,
         overflowing_literals, plugin_as_library, private_no_mangle_fns, private_no_mangle_statics,
         raw_pointer_derive, stable_features, unconditional_recursion, unknown_lints,
         unsafe_code, unsigned_negation, unused, unused_allocation, unused_attributes,
@@ -53,10 +53,17 @@ impl<K: PartialOrd + Ord + Clone, V: Clone> Accumulator<K, V> {
     pub fn new(quorum: usize) -> Accumulator<K, V> {
         Accumulator { quorum: quorum, storage: LruCache::<K, Entry<V>>::with_capacity(1000) }
     }
-    /// Check for existance of any key
+    /// Check for existence of any key and `refresh` the key in the LRU cache.
+    // TODO: I think this one should be deprecated in favor of the `contains_key` function.
     pub fn have_name(&mut self, name: &K) -> bool {
         self.storage.get(name).is_some()
     }
+
+    /// Check for existence of any key
+    pub fn contains_key(&self, name: &K) -> bool {
+        self.storage.check(name)
+    }
+
     /// Check if requested size is accumulated
     pub fn is_quorum_reached(&mut self, name: &K) -> bool {
         let entry = self.storage.get(name);
