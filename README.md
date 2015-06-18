@@ -1,3 +1,4 @@
+[![Stories in Ready](https://badge.waffle.io/maidsafe/accumulator.png?label=ready&title=Ready)](https://waffle.io/maidsafe/accumulator)
 # Accumulator
 
 **Primary Maintainer:**     Chandra Prakash (prakash@maidsafe.net)
