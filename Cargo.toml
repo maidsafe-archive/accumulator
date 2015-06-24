@@ -1,15 +1,13 @@
 [package]
-
 name = "accumulator"
 version = "0.0.2"
 authors = ["MaidSafe Developers <dev@maidsafe.net>"]
 description = "An accumulator container backed by time based lru cache"
-documentation = "http://maidsafe.github.io/accumulator/latest"
+documentation = "http://maidsafe.net/accumulator/latest"
 repository = "https://github.com/maidsafe/accumulator"
 readme = "README.md"
 license = "GPL-3.0"
 homepage = "http://maidsafe.net"
-
 
 [dependencies]
 lru_time_cache = "0.1.8"
