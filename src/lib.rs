@@ -111,6 +111,10 @@ impl<K: PartialOrd + Ord + Clone, V: Clone> Accumulator<K, V> {
     pub fn cache_size(&mut self) -> usize {
         self.storage.len()
     }
+    /// Sets new size for quorum
+    pub fn set_quorum_size(&mut self, new_size: usize) {
+        self.quorum = new_size;
+    }
 }
 
 #[cfg(test)]
@@ -295,5 +299,13 @@ mod test {
             assert_eq!(accumulator.is_quorum_reached(&(count + 1001)), false);
             assert_eq!(accumulator.cache_size(), 1000);
         }
+    }
+
+    #[test]
+    fn set_quorum_size() {
+        let mut accumulator : Accumulator<i32, u32> = Accumulator::new(2);
+        let random = rand::random::<usize>();
+        accumulator.set_quorum_size(random);
+        assert_eq!(random, accumulator.quorum);
     }
 }
