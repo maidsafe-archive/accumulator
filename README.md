@@ -21,7 +21,7 @@ None
 ##Todo Items
 
 ## [0.0.4]
-- [x] [MAID-1132] (https://maidsafe.atlassian.net/browse/MAID-1258) Add a setter function for threshold size
+- [x] [MAID-1258] (https://maidsafe.atlassian.net/browse/MAID-1258) Add a setter function for threshold size
 
 ## Future version
 - [ ] Add time point to allow removal of old items (save memory leak)
