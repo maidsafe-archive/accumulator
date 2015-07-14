@@ -111,7 +111,6 @@ impl<K: PartialOrd + Ord + Clone, V: Clone> Accumulator<K, V> {
     pub fn cache_size(&mut self) -> usize {
         self.storage.len()
     }
-
     /// Sets new size for quorum
     pub fn set_quorum_size(&mut self, new_size: usize) {
         self.quorum = new_size;
