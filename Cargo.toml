@@ -1,6 +1,6 @@
 [package]
 name = "accumulator"
-version = "0.0.3"
+version = "0.0.4"
 authors = ["MaidSafe Developers <dev@maidsafe.net>"]
 description = "An accumulator container backed by time based lru cache"
 documentation = "http://maidsafe.net/accumulator/latest"
