@@ -28,8 +28,9 @@
 
 //! An accumulator container based on an Lru cach (time and size controlled)
 //! This container accumulate keys *until* a number of entries is reached.
-//!
-//!
+//! After this quaorum has been reached the container will continue to accept values for such keys
+//! this allows users to test merge functions until they are happy they have a good value.
+//! Otherwise a hacker could pass a single bad value and break all quorums
 
 extern crate lru_time_cache;
 extern crate time;
@@ -99,10 +100,10 @@ impl<K: PartialOrd + Ord + Clone, V: Clone> Accumulator<K, V> {
     }
     /// Retrieve a ky/value from the store
     pub fn get(&mut self, name: &K) -> Option<Vec<V>>{
-            match self.lru_cache.get(name) {
+        match self.lru_cache.get(name) {
             Some(entry) => Some(entry.clone()),
-            None => None    
-            }
+                None => None    
+        }
     }
     /// Remove an entry (all values for a key will be removed)
     pub fn delete(&mut self, name: &K) {
