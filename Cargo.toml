@@ -11,4 +11,8 @@ homepage = "http://maidsafe.net"
 
 [dependencies]
 lru_time_cache = "0.2.*"
+time = "*"
+log = "*"
+
+[dev-dependencies]
 rand = "*"
