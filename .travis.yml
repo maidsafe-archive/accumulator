@@ -1,3 +1,6 @@
+env:
+  global:
+    secure: LFLXKXr1nFmccFp3fNCW53tBofALGrC6LBtX3TSpx607JvQ+qS4ERjeTyHnrXNVbe1AClQ8jQETM8YlyQaxbl+OreiXZ4yZbpDGud+vz8EsZU+3wrXDUl8s9B96WGtj0biowHQubPFh/+NdDzBkqnn9TjDJIwbG8l1rvyimXmrA=
 os:
   - linux
   - osx
@@ -10,12 +13,7 @@ sudo: false
 branches:
   only:
       - master
-env:
-  global:
-    secure: LFLXKXr1nFmccFp3fNCW53tBofALGrC6LBtX3TSpx607JvQ+qS4ERjeTyHnrXNVbe1AClQ8jQETM8YlyQaxbl+OreiXZ4yZbpDGud+vz8EsZU+3wrXDUl8s9B96WGtj0biowHQubPFh/+NdDzBkqnn9TjDJIwbG8l1rvyimXmrA=
 script:
-  - cargo build --verbose
-  - cargo test --verbose
-  - cargo bench
+  - curl -sSL https://github.com/maidsafe/QA/raw/master/Bash%20Scripts/Travis/build_and_run_tests.sh | bash
 after_success:
   - curl -sSL https://github.com/maidsafe/QA/raw/master/Bash%20Scripts/Travis/deploy_gh-pages.sh | bash
