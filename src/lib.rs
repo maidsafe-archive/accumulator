@@ -85,7 +85,7 @@ impl<K: PartialOrd + Ord + Clone, V: Clone> Accumulator<K, V> {
                     None => debug!("key found cannot push to value")
             }
         } else {
-            self.lru_cache.add(key.clone(), vec![value]);
+            self.lru_cache.insert(key.clone(), vec![value]);
         }
 
         // FIXME(dirvine) This iterates to many times, should combine and answer in one iteration :27/08/2015
