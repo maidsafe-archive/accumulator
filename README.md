@@ -2,7 +2,7 @@
 
 [![](https://img.shields.io/badge/Project%20SAFE-Approved-green.svg)](http://maidsafe.net/applications) [![](https://img.shields.io/badge/License-GPL3-green.svg)](https://github.com/maidsafe/accumulator/blob/master/COPYING)
 
-**Primary Maintainer:**     Chandra Prakash (prakash@maidsafe.net)
+**Primary Maintainer:**     Fraser Hutchison (fraser.hutchison@maidsafe.net)
 
 A container that will accept key value pairs until a size is reached
 
