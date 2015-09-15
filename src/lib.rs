@@ -34,13 +34,17 @@
 
 extern crate lru_time_cache;
 extern crate time;
-#[macro_use] extern crate log;
+#[macro_use]
+extern crate log;
 
 /// Accumulator for various message types
-pub struct Accumulator<K, V> where K: PartialOrd + Ord + Clone, V: Clone {
+pub struct Accumulator<K, V>
+    where K: PartialOrd + Ord + Clone,
+          V: Clone
+{
     /// Expected threshold for resolve
     quorum: usize,
-    lru_cache: ::lru_time_cache::LruCache<K, Vec<V>>
+    lru_cache: ::lru_time_cache::LruCache<K, Vec<V>>,
 }
 
 impl<K: PartialOrd + Ord + Clone, V: Clone> Accumulator<K, V> {
@@ -48,7 +52,7 @@ impl<K: PartialOrd + Ord + Clone, V: Clone> Accumulator<K, V> {
     pub fn with_capacity(quorum: usize, capacity: usize) -> Accumulator<K, V> {
         Accumulator {
             quorum: quorum,
-            lru_cache: ::lru_time_cache::LruCache::<K, Vec<V>>::with_capacity(capacity)
+            lru_cache: ::lru_time_cache::LruCache::<K, Vec<V>>::with_capacity(capacity),
         }
     }
 
@@ -56,7 +60,7 @@ impl<K: PartialOrd + Ord + Clone, V: Clone> Accumulator<K, V> {
     pub fn with_duration(quorum: usize, duration: ::time::Duration) -> Accumulator<K, V> {
         Accumulator {
             quorum: quorum,
-            lru_cache: ::lru_time_cache::LruCache::<K, Vec<V>>::with_expiry_duration(duration)
+            lru_cache: ::lru_time_cache::LruCache::<K, Vec<V>>::with_expiry_duration(duration),
         }
     }
 
@@ -69,44 +73,45 @@ impl<K: PartialOrd + Ord + Clone, V: Clone> Accumulator<K, V> {
     pub fn is_quorum_reached(&mut self, name: &K) -> bool {
         match self.lru_cache.get(name) {
             None => false,
-            Some(entry) => entry.len() >= self.quorum
+            Some(entry) => entry.len() >= self.quorum,
         }
     }
     // /// Check if requested size will be accumulated on this attempt
     // fn will_reach_quorum(&mut self, name: &K) -> bool {
     //     match self.lru_cache.get(name) {
     //     None => self.quorum == 1 || false,
-    //     Some(entry) => entry.received_response.len() + 1 == self.quorum     
+    //     Some(entry) => entry.received_response.len() + 1 == self.quorum
     //     }
     // }
     /// Add a key / value pair, returns key and vector of values if size reached
     /// if already reached then keep adding to this value (we cannot tell values are all valid)
-    pub fn add(&mut self, key: K, value: V)-> Option<Vec<V>> {
+    pub fn add(&mut self, key: K, value: V) -> Option<Vec<V>> {
 
         if self.contains_key(&key) {
             match self.lru_cache.get_mut(&key) {
                 Some(result) => result.push(value),
-                None => debug!("key found cannot push to value")
+                None => debug!("key found cannot push to value"),
             }
         } else {
             self.lru_cache.insert(key.clone(), vec![value]);
         }
 
-        // FIXME(dirvine) This iterates to many times, should combine and answer in one iteration :27/08/2015
+        // FIXME(dirvine) This iterates to many times,
+        // should combine and answer in one iteration :27/08/2015
         if self.is_quorum_reached(&key) {
             match self.lru_cache.get(&key) {
                 Some(value) => Some(value.clone()),
-                None => None
+                None => None,
             }
         } else {
             None
         }
     }
     /// Retrieve a ky/value from the store
-    pub fn get(&mut self, name: &K) -> Option<Vec<V>>{
+    pub fn get(&mut self, name: &K) -> Option<Vec<V>> {
         match self.lru_cache.get(name) {
             Some(entry) => Some(entry.clone()),
-            None => None
+            None => None,
         }
     }
     /// Remove an entry (all values for a key will be removed)
@@ -160,7 +165,7 @@ mod test {
         let mut accumulator = super::Accumulator::with_capacity(quorum_size, 100);
         let key = self::rand::random::<i32>();
         let value = self::rand::random::<u32>();
-        for i in 0..quorum_size-1 {
+        for i in 0..quorum_size - 1 {
             assert!(accumulator.add(key, value).is_none());
             let value = accumulator.get(&key).unwrap();
             assert_eq!(value.len(), i + 1);
@@ -176,10 +181,10 @@ mod test {
 
     #[test]
     fn add_multiple_values_quorum() {
-        let quorum_size  = 19;
+        let quorum_size = 19;
         let mut accumulator = super::Accumulator::with_capacity(quorum_size, 100);
         let key = self::rand::random::<i32>();
-        for _ in 0..quorum_size -1 {
+        for _ in 0..quorum_size - 1 {
             assert!(accumulator.add(key, self::rand::random::<u32>()).is_none());
             assert_eq!(accumulator.is_quorum_reached(&key), false);
         }
@@ -192,12 +197,14 @@ mod test {
         let quorum_size = 19;
         let mut accumulator = super::Accumulator::with_capacity(quorum_size, 100);
         let key = self::rand::random::<i32>();
-        let mut noise_keys : Vec<i32> = Vec::with_capacity(5);
+        let mut noise_keys: Vec<i32> = Vec::with_capacity(5);
         while noise_keys.len() < 5 {
             let noise_key = self::rand::random::<i32>();
-            if noise_key != key { noise_keys.push(noise_key); }; 
+            if noise_key != key {
+                noise_keys.push(noise_key);
+            };
         };
-        for _ in 0..quorum_size -1 {
+        for _ in 0..quorum_size - 1 {
             for noise_key in noise_keys.iter() {
                 accumulator.add(noise_key.clone(), self::rand::random::<u32>());
             }
@@ -298,8 +305,8 @@ mod test {
 
     #[test]
     fn set_quorum_size() {
-        let mut accumulator: super::Accumulator<i32, u32> =
-            super::Accumulator::with_capacity(2, 100);
+        let mut accumulator: super::Accumulator<i32, u32> = super::Accumulator::with_capacity(2,
+                                                                                              100);
         let random = self::rand::random::<usize>();
         accumulator.set_quorum_size(random);
         assert_eq!(random, accumulator.quorum);
