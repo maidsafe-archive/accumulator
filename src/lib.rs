@@ -14,28 +14,99 @@
 //
 // Please review the Licences for the specific language governing permissions and limitations
 // relating to use of the SAFE Network Software.
-#![doc(html_logo_url = "https://raw.githubusercontent.com/maidsafe/QA/master/Images/maidsafe_logo.png",
+
+//! # Accumulator
+//!
+//! A key-value store limited by size or time, allowing accumulation of multiple values under a
+//! single key.
+//!
+//! When adding (accumulating) values under a given key, once a predefined quorum count has been
+//! reached, the function will thereafter return all the accumulated values for that particular key.
+
+#![doc(html_logo_url =
+           "https://raw.githubusercontent.com/maidsafe/QA/master/Images/maidsafe_logo.png",
        html_favicon_url = "http://maidsafe.net/img/favicon.ico",
-              html_root_url = "http://maidsafe.github.io/accumulator")]
-#![forbid(bad_style, missing_docs, warnings)]
-#![deny(deprecated, improper_ctypes, non_shorthand_field_patterns,
-        overflowing_literals, plugin_as_library, private_no_mangle_fns, private_no_mangle_statics,
-        raw_pointer_derive, stable_features, unconditional_recursion, unknown_lints,
-        unsafe_code, unused, unused_allocation, unused_attributes,
-        unused_comparisons, unused_features, unused_parens, while_true)]
-#![warn(trivial_casts, trivial_numeric_casts, unused_extern_crates, unused_import_braces,
-        unused_qualifications, variant_size_differences)]
+       html_root_url = "http://maidsafe.github.io/accumulator")]
 
-//! An accumulator container based on an Lru cach (time and size controlled)
-//! This container accumulate keys *until* a number of entries is reached.
-//! After this quaorum has been reached the container will continue to accept values for such keys
-//! this allows users to test merge functions until they are happy they have a good value.
-//! Otherwise a hacker could pass a single bad value and break all quorums
+#![forbid(
+    bad_style,              // Includes:
+                            // - non_camel_case_types:   types, variants, traits and type parameters
+                            //                           should have camel case names,
+                            // - non_snake_case:         methods, functions, lifetime parameters and
+                            //                           modules should have snake case names
+                            // - non_upper_case_globals: static constants should have uppercase
+                            //                           identifiers
+    exceeding_bitshifts,    // shift exceeds the type's number of bits
+    mutable_transmutes,     // mutating transmuted &mut T from &T may cause undefined behavior
+    no_mangle_const_items,  // const items will not have their symbols exported
+    unknown_crate_types,    // unknown crate type found in #[crate_type] directive
+    warnings                // mass-change the level for lints which produce warnings
+    )]
 
-extern crate lru_time_cache;
-extern crate time;
+#![deny(
+    deprecated,                    // detects use of #[deprecated] items
+    drop_with_repr_extern,         // use of #[repr(C)] on a type that implements Drop
+    improper_ctypes,               // proper use of libc types in foreign modules
+    missing_docs,                  // detects missing documentation for public members
+    non_shorthand_field_patterns,  // using `Struct { x: x }` instead of `Struct { x }`
+    overflowing_literals,          // literal out of range for its type
+    plugin_as_library,             // compiler plugin used as ordinary library in non-plugin crate
+    private_no_mangle_fns,         // functions marked #[no_mangle] should be exported
+    private_no_mangle_statics,     // statics marked #[no_mangle] should be exported
+    raw_pointer_derive,            // uses of #[derive] with raw pointers are rarely correct
+    stable_features,               // stable features found in #[feature] directive
+    unconditional_recursion,       // functions that cannot return without calling themselves
+    unknown_lints,                 // unrecognized lint attribute
+    unsafe_code,                   // usage of `unsafe` code
+    unused,                        // Includes:
+                                   // - unused_imports:     imports that are never used
+                                   // - unused_variables:   detect variables which are not used in
+                                   //                       any way
+                                   // - unused_assignments: detect assignments that will never be
+                                   //                       read
+                                   // - dead_code:          detect unused, unexported items
+                                   // - unused_mut:         detect mut variables which don't need to
+                                   //                       be mutable
+                                   // - unreachable_code:   detects unreachable code paths
+                                   // - unused_must_use:    unused result of a type flagged as
+                                   //                       #[must_use]
+                                   // - unused_unsafe:      unnecessary use of an `unsafe` block
+                                   // - path_statements: path statements with no effect
+    unused_allocation,             // detects unnecessary allocations that can be eliminated
+    unused_attributes,             // detects attributes that were not used by the compiler
+    unused_comparisons,            // comparisons made useless by limits of the types involved
+    unused_features,               // unused or unknown features found in crate-level #[feature]
+                                   // directives
+    unused_parens,                 // `if`, `match`, `while` and `return` do not need parentheses
+    while_true                     // suggest using `loop { }` instead of `while true { }`
+    )]
+
+#![warn(
+    trivial_casts,            // detects trivial casts which could be removed
+    trivial_numeric_casts,    // detects trivial casts of numeric types which could be removed
+    unused_extern_crates,     // extern crates that are never used
+    unused_import_braces,     // unnecessary braces around an imported item
+    unused_qualifications,    // detects unnecessarily qualified names
+    unused_results,           // unused result of an expression in a statement
+    variant_size_differences  // detects enums with widely varying variant sizes
+    )]
+
+#![allow(
+    box_pointers,                  // use of owned (Box type) heap memory
+    fat_ptr_transmutes,            // detects transmutes of fat pointers
+    missing_copy_implementations,  // detects potentially-forgotten implementations of `Copy`
+    missing_debug_implementations  // detects missing implementations of fmt::Debug
+    )]
+
+// Non-MaidSafe crates
 #[macro_use]
 extern crate log;
+#[cfg(test)]
+extern crate rand;
+extern crate time;
+
+// MaidSafe crates
+extern crate lru_time_cache;
 
 /// Accumulator for various message types
 pub struct Accumulator<K, V>
@@ -93,7 +164,7 @@ impl<K: PartialOrd + Ord + Clone, V: Clone> Accumulator<K, V> {
                 None => debug!("key found cannot push to value"),
             }
         } else {
-            self.lru_cache.insert(key.clone(), vec![value]);
+            let _ = self.lru_cache.insert(key.clone(), vec![value]);
         }
 
         // FIXME(dirvine) This iterates to many times,
@@ -116,7 +187,7 @@ impl<K: PartialOrd + Ord + Clone, V: Clone> Accumulator<K, V> {
     }
     /// Remove an entry (all values for a key will be removed)
     pub fn delete(&mut self, name: &K) {
-        self.lru_cache.remove(name);
+        let _ = self.lru_cache.remove(name);
     }
     /// Return size of container
     pub fn cache_size(&mut self) -> usize {
@@ -130,8 +201,6 @@ impl<K: PartialOrd + Ord + Clone, V: Clone> Accumulator<K, V> {
 
 #[cfg(test)]
 mod test {
-    extern crate rand;
-
     #[test]
     fn add() {
         let mut accumulator = super::Accumulator::with_capacity(1, 100);
@@ -163,8 +232,8 @@ mod test {
     fn add_single_value_quorum() {
         let quorum_size = 19;
         let mut accumulator = super::Accumulator::with_capacity(quorum_size, 100);
-        let key = self::rand::random::<i32>();
-        let value = self::rand::random::<u32>();
+        let key = ::rand::random::<i32>();
+        let value = ::rand::random::<u32>();
         for i in 0..quorum_size - 1 {
             assert!(accumulator.add(key, value).is_none());
             let value = accumulator.get(&key).unwrap();
@@ -183,12 +252,12 @@ mod test {
     fn add_multiple_values_quorum() {
         let quorum_size = 19;
         let mut accumulator = super::Accumulator::with_capacity(quorum_size, 100);
-        let key = self::rand::random::<i32>();
+        let key = ::rand::random::<i32>();
         for _ in 0..quorum_size - 1 {
-            assert!(accumulator.add(key, self::rand::random::<u32>()).is_none());
+            assert!(accumulator.add(key, ::rand::random::<u32>()).is_none());
             assert_eq!(accumulator.is_quorum_reached(&key), false);
         }
-        assert!(accumulator.add(key, self::rand::random::<u32>()).is_some());
+        assert!(accumulator.add(key, ::rand::random::<u32>()).is_some());
         assert_eq!(accumulator.is_quorum_reached(&key), true);
     }
 
@@ -196,22 +265,22 @@ mod test {
     fn add_multiple_keys_quorum() {
         let quorum_size = 19;
         let mut accumulator = super::Accumulator::with_capacity(quorum_size, 100);
-        let key = self::rand::random::<i32>();
+        let key = ::rand::random::<i32>();
         let mut noise_keys: Vec<i32> = Vec::with_capacity(5);
         while noise_keys.len() < 5 {
-            let noise_key = self::rand::random::<i32>();
+            let noise_key = ::rand::random::<i32>();
             if noise_key != key {
                 noise_keys.push(noise_key);
             };
         };
         for _ in 0..quorum_size - 1 {
             for noise_key in noise_keys.iter() {
-                accumulator.add(noise_key.clone(), self::rand::random::<u32>());
+                let _ = accumulator.add(noise_key.clone(), ::rand::random::<u32>());
             }
-            assert!(accumulator.add(key.clone(), self::rand::random::<u32>()).is_none());
+            assert!(accumulator.add(key.clone(), ::rand::random::<u32>()).is_none());
             assert_eq!(accumulator.is_quorum_reached(&key), false);
         }
-        assert!(accumulator.add(key.clone(), self::rand::random::<u32>()).is_some());
+        assert!(accumulator.add(key.clone(), ::rand::random::<u32>()).is_some());
         assert_eq!(accumulator.is_quorum_reached(&key), true);
     }
 
@@ -307,7 +376,7 @@ mod test {
     fn set_quorum_size() {
         let mut accumulator: super::Accumulator<i32, u32> = super::Accumulator::with_capacity(2,
                                                                                               100);
-        let random = self::rand::random::<usize>();
+        let random = ::rand::random::<usize>();
         accumulator.set_quorum_size(random);
         assert_eq!(random, accumulator.quorum);
     }
