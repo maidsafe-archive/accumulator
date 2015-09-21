@@ -2,7 +2,7 @@
 name = "accumulator"
 version = "0.1.2"
 authors = ["MaidSafe Developers <dev@maidsafe.net>"]
-description = "An accumulator container backed by time based lru cache"
+description = "A key-value store limited by size or time, allowing accumulation of multiple values under a single key."
 documentation = "http://maidsafe.net/accumulator/latest"
 repository = "https://github.com/maidsafe/accumulator"
 readme = "README.md"
@@ -10,9 +10,12 @@ license = "GPL-3.0"
 homepage = "http://maidsafe.net"
 
 [dependencies]
-lru_time_cache = "0.2.*"
-time = "*"
+# ---- Non-MaidSafe -----
 log = "*"
+time = "*"
+
+# ---- MaidSafe ------
+lru_time_cache = "0.2.*"
 
 [dev-dependencies]
 rand = "*"
