@@ -108,18 +108,20 @@ extern crate time;
 // MaidSafe crates
 extern crate lru_time_cache;
 
-/// Accumulator for various message types
+/// Implementation of [Accumulator](index.html#accumulator).
 pub struct Accumulator<K, V>
     where K: PartialOrd + Ord + Clone,
           V: Clone
 {
-    /// Expected threshold for resolve
+    // Expected threshold for resolve
     quorum: usize,
     lru_cache: ::lru_time_cache::LruCache<K, Vec<V>>,
 }
 
 impl<K: PartialOrd + Ord + Clone, V: Clone> Accumulator<K, V> {
-    /// Construct an accumulator and pass size to accumulate unil
+    /// Constructor for capacity based `Accumulator`.
+    ///
+    /// `quorum` defines the count at and above which [`add()`](#method.add) will return `Some()`.
     pub fn with_capacity(quorum: usize, capacity: usize) -> Accumulator<K, V> {
         Accumulator {
             quorum: quorum,
@@ -127,7 +129,9 @@ impl<K: PartialOrd + Ord + Clone, V: Clone> Accumulator<K, V> {
         }
     }
 
-    /// Construct an accumulator and pass duration to accumulate until
+    /// Constructor for time based `Accumulator`.
+    ///
+    /// `quorum` defines the count at and above which [`add()`](#method.add) will return `Some()`.
     pub fn with_duration(quorum: usize, duration: ::time::Duration) -> Accumulator<K, V> {
         Accumulator {
             quorum: quorum,
@@ -135,29 +139,24 @@ impl<K: PartialOrd + Ord + Clone, V: Clone> Accumulator<K, V> {
         }
     }
 
-    /// Check for existence of any key
+    /// Returns whether `key` exists in the accumulator or not.
     pub fn contains_key(&mut self, name: &K) -> bool {
         self.lru_cache.contains_key(name)
     }
 
-    /// Check if requested size is accumulated
+    /// Returns whether `key` exists and has accumulated `quorum` or more corresponding values.
     pub fn is_quorum_reached(&mut self, name: &K) -> bool {
         match self.lru_cache.get(name) {
             None => false,
             Some(entry) => entry.len() >= self.quorum,
         }
     }
-    // /// Check if requested size will be accumulated on this attempt
-    // fn will_reach_quorum(&mut self, name: &K) -> bool {
-    //     match self.lru_cache.get(name) {
-    //     None => self.quorum == 1 || false,
-    //     Some(entry) => entry.received_response.len() + 1 == self.quorum
-    //     }
-    // }
-    /// Add a key / value pair, returns key and vector of values if size reached
-    /// if already reached then keep adding to this value (we cannot tell values are all valid)
-    pub fn add(&mut self, key: K, value: V) -> Option<Vec<V>> {
 
+    /// Adds a key-value pair.
+    ///
+    /// Returns the corresponding values for `key` if `quorum` or more values have been accumulated,
+    /// otherwise returns `None`.
+    pub fn add(&mut self, key: K, value: V) -> Option<Vec<V>> {
         if self.contains_key(&key) {
             match self.lru_cache.get_mut(&key) {
                 Some(result) => result.push(value),
@@ -178,22 +177,28 @@ impl<K: PartialOrd + Ord + Clone, V: Clone> Accumulator<K, V> {
             None
         }
     }
-    /// Retrieve a ky/value from the store
+
+    /// Retrieves a clone of the values accumulated under `key`, or `None`  if `key` doesn't exist.
     pub fn get(&mut self, name: &K) -> Option<Vec<V>> {
         match self.lru_cache.get(name) {
             Some(entry) => Some(entry.clone()),
             None => None,
         }
     }
-    /// Remove an entry (all values for a key will be removed)
+
+    /// Removes `key` and all corresponding accumulated values.
     pub fn delete(&mut self, name: &K) {
         let _ = self.lru_cache.remove(name);
     }
-    /// Return size of container
+
+    /// Returns the size of the accumulator, i.e. the number of keys held.
     pub fn cache_size(&mut self) -> usize {
         self.lru_cache.len()
     }
-    /// Sets new size for quorum
+
+    /// Sets a new value for `quorum`.
+    ///
+    /// This has immediate effect, even for existing key-value entries.
     pub fn set_quorum_size(&mut self, new_size: usize) {
         self.quorum = new_size;
     }
