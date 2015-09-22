@@ -109,44 +109,45 @@ extern crate time;
 extern crate lru_time_cache;
 
 /// Implementation of [Accumulator](index.html#accumulator).
-pub struct Accumulator<K, V>
-    where K: PartialOrd + Ord + Clone,
-          V: Clone
+pub struct Accumulator<Key, Value>
+    where Key: PartialOrd + Ord + Clone,
+          Value: Clone
 {
     // Expected threshold for resolve
     quorum: usize,
-    lru_cache: ::lru_time_cache::LruCache<K, Vec<V>>,
+    lru_cache: ::lru_time_cache::LruCache<Key, Vec<Value>>,
 }
 
-impl<K: PartialOrd + Ord + Clone, V: Clone> Accumulator<K, V> {
+impl<Key: PartialOrd + Ord + Clone, Value: Clone> Accumulator<Key, Value> {
     /// Constructor for capacity based `Accumulator`.
     ///
     /// `quorum` defines the count at and above which [`add()`](#method.add) will return `Some()`.
-    pub fn with_capacity(quorum: usize, capacity: usize) -> Accumulator<K, V> {
+    pub fn with_capacity(quorum: usize, capacity: usize) -> Accumulator<Key, Value> {
         Accumulator {
             quorum: quorum,
-            lru_cache: ::lru_time_cache::LruCache::<K, Vec<V>>::with_capacity(capacity),
+            lru_cache: ::lru_time_cache::LruCache::<Key, Vec<Value>>::with_capacity(capacity),
         }
     }
 
     /// Constructor for time based `Accumulator`.
     ///
     /// `quorum` defines the count at and above which [`add()`](#method.add) will return `Some()`.
-    pub fn with_duration(quorum: usize, duration: ::time::Duration) -> Accumulator<K, V> {
+    pub fn with_duration(quorum: usize, duration: ::time::Duration) -> Accumulator<Key, Value> {
         Accumulator {
             quorum: quorum,
-            lru_cache: ::lru_time_cache::LruCache::<K, Vec<V>>::with_expiry_duration(duration),
+            lru_cache:
+                ::lru_time_cache::LruCache::<Key, Vec<Value>>::with_expiry_duration(duration),
         }
     }
 
     /// Returns whether `key` exists in the accumulator or not.
-    pub fn contains_key(&mut self, name: &K) -> bool {
-        self.lru_cache.contains_key(name)
+    pub fn contains_key(&mut self, key: &Key) -> bool {
+        self.lru_cache.contains_key(key)
     }
 
     /// Returns whether `key` exists and has accumulated `quorum` or more corresponding values.
-    pub fn is_quorum_reached(&mut self, name: &K) -> bool {
-        match self.lru_cache.get(name) {
+    pub fn is_quorum_reached(&mut self, key: &Key) -> bool {
+        match self.lru_cache.get(key) {
             None => false,
             Some(entry) => entry.len() >= self.quorum,
         }
@@ -156,7 +157,7 @@ impl<K: PartialOrd + Ord + Clone, V: Clone> Accumulator<K, V> {
     ///
     /// Returns the corresponding values for `key` if `quorum` or more values have been accumulated,
     /// otherwise returns `None`.
-    pub fn add(&mut self, key: K, value: V) -> Option<Vec<V>> {
+    pub fn add(&mut self, key: Key, value: Value) -> Option<Vec<Value>> {
         if self.contains_key(&key) {
             match self.lru_cache.get_mut(&key) {
                 Some(result) => result.push(value),
@@ -166,7 +167,7 @@ impl<K: PartialOrd + Ord + Clone, V: Clone> Accumulator<K, V> {
             let _ = self.lru_cache.insert(key.clone(), vec![value]);
         }
 
-        // FIXME(dirvine) This iterates to many times,
+        // FIXME(dirvine) This iterates too many times,
         // should combine and answer in one iteration :27/08/2015
         if self.is_quorum_reached(&key) {
             match self.lru_cache.get(&key) {
@@ -179,16 +180,16 @@ impl<K: PartialOrd + Ord + Clone, V: Clone> Accumulator<K, V> {
     }
 
     /// Retrieves a clone of the values accumulated under `key`, or `None`  if `key` doesn't exist.
-    pub fn get(&mut self, name: &K) -> Option<Vec<V>> {
-        match self.lru_cache.get(name) {
+    pub fn get(&mut self, key: &Key) -> Option<Vec<Value>> {
+        match self.lru_cache.get(key) {
             Some(entry) => Some(entry.clone()),
             None => None,
         }
     }
 
     /// Removes `key` and all corresponding accumulated values.
-    pub fn delete(&mut self, name: &K) {
-        let _ = self.lru_cache.remove(name);
+    pub fn delete(&mut self, key: &Key) {
+        let _ = self.lru_cache.remove(key);
     }
 
     /// Returns the size of the accumulator, i.e. the number of keys held.
