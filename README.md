@@ -11,12 +11,12 @@
 | [API Documentation - master branch](http://maidsafe.net/accumulator/master) | [SAFE Network System Documentation](http://systemdocs.maidsafe.net) | [MaidSafe website](http://maidsafe.net) | [SAFE Network Forum](https://forum.safenetwork.io) |
 |:------:|:-------:|:-------:|:-------:|
 
-# Overview
+## Overview
 
 A key-value store limited by size or time, allowing accumulation of multiple values under a single key.
 
-# Todo Items
+## Todo Items
 
-## [0.2.0]
+### [0.2.0]
 - [ ] Add time point to allow removal of old items (save memory leak)
 - [ ] API version 1.0.0
