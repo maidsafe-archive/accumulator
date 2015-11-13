@@ -1,5 +1,8 @@
 # Accumulator - Change Log
 
+## [0.1.3]
+- Remove wildcards from dependencies
+
 ## [0.1.2]
 - Updated in line with lru_time_cache 0.2.2
 
