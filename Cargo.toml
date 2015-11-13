@@ -1,6 +1,6 @@
 [package]
 name = "accumulator"
-version = "0.1.2"
+version = "0.1.3"
 authors = ["MaidSafe Developers <dev@maidsafe.net>"]
 description = "A key-value store limited by size or time, allowing accumulation of multiple values under a single key."
 documentation = "http://maidsafe.net/accumulator/latest"
@@ -11,11 +11,11 @@ homepage = "http://maidsafe.net"
 
 [dependencies]
 # ---- Non-MaidSafe -----
-log = "*"
-time = "*"
+log = "~0.3.3"
+time = "~0.1.34"
 
 # ---- MaidSafe ------
-lru_time_cache = "0.2.*"
+lru_time_cache = "~0.2.4"
 
 [dev-dependencies]
-rand = "*"
+rand = "~0.3.12"
