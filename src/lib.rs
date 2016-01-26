@@ -42,9 +42,18 @@
 #![allow(box_pointers, fat_ptr_transmutes, missing_copy_implementations,
          missing_debug_implementations)]
 
+#![cfg_attr(feature="clippy", feature(plugin))]
+#![cfg_attr(feature="clippy", plugin(clippy))]
+#![cfg_attr(feature="clippy", deny(clippy))]
+#![cfg_attr(feature="clippy", deny(clippy_pedantic))]
+
 // Non-MaidSafe crates
 #[macro_use]
 extern crate log;
+#[cfg(test)]
+#[macro_use]
+#[allow(unused_extern_crates)]  // Only using macros from maidsafe_utilites
+extern crate maidsafe_utilities;
 #[cfg(test)]
 extern crate rand;
 extern crate time;
@@ -65,6 +74,7 @@ pub struct Accumulator<Key, Value>
     lru_cache: LruCache<Key, Vec<Value>>,
 }
 
+#[cfg_attr(feature="clippy", allow(wrong_self_convention))]
 impl<Key: PartialOrd + Ord + Clone, Value: Clone> Accumulator<Key, Value> {
     /// Constructor for capacity based `Accumulator`.
     ///
@@ -172,12 +182,12 @@ mod test {
         assert_eq!(accumulator.contains_key(&1), true);
         assert_eq!(accumulator.is_quorum_reached(&1), true);
 
-        let responses = accumulator.get(&1).unwrap();
+        let mut responses = unwrap_option!(accumulator.get(&1), "");
 
         assert_eq!(responses.len(), 2);
         assert_eq!(responses[0], 3);
 
-        let responses = accumulator.get(&2).unwrap();
+        responses = unwrap_option!(accumulator.get(&2), "");
 
         assert_eq!(responses.len(), 1);
         assert_eq!(responses[0], 3);
@@ -191,15 +201,15 @@ mod test {
         let value = random::<u32>();
         for i in 0..quorum_size - 1 {
             assert!(accumulator.add(key, value).is_none());
-            let value = accumulator.get(&key).unwrap();
-            assert_eq!(value.len(), i + 1);
+            let retrieved_value = unwrap_option!(accumulator.get(&key), "");
+            assert_eq!(retrieved_value.len(), i + 1);
             // for response in value { assert_eq!(response, value); };
             assert_eq!(accumulator.is_quorum_reached(&key), false);
         }
         assert!(accumulator.add(key, value).is_some());
         assert_eq!(accumulator.is_quorum_reached(&key), true);
-        let value = accumulator.get(&key).unwrap();
-        assert_eq!(value.len(), quorum_size);
+        let retrieved_value = unwrap_option!(accumulator.get(&key), "");
+        assert_eq!(retrieved_value.len(), quorum_size);
         // for response in value { assert_eq!(response, value); };
     }
 
@@ -229,7 +239,7 @@ mod test {
             };
         }
         for _ in 0..quorum_size - 1 {
-            for noise_key in noise_keys.iter() {
+            for noise_key in &noise_keys {
                 let _ = accumulator.add(noise_key.clone(), random::<u32>());
             }
             assert!(accumulator.add(key.clone(), random::<u32>()).is_none());
@@ -247,16 +257,14 @@ mod test {
         assert_eq!(accumulator.contains_key(&1), true);
         assert_eq!(accumulator.is_quorum_reached(&1), false);
 
-        let responses = accumulator.get(&1).unwrap();
+        let mut responses = unwrap_option!(accumulator.get(&1), "");
 
         assert_eq!(responses.len(), 1);
         assert_eq!(responses[0], 1);
 
         accumulator.delete(&1);
 
-        let option = accumulator.get(&1);
-
-        assert!(option.is_none());
+        assert!(accumulator.get(&1).is_none());
 
         assert!(accumulator.add(1, 1).is_none());
         assert_eq!(accumulator.contains_key(&1), true);
@@ -265,7 +273,7 @@ mod test {
         assert_eq!(accumulator.contains_key(&1), true);
         assert_eq!(accumulator.is_quorum_reached(&1), true);
 
-        let responses = accumulator.get(&1).unwrap();
+        responses = unwrap_option!(accumulator.get(&1), "");
 
         assert_eq!(responses.len(), 2);
         assert_eq!(responses[0], 1);
@@ -273,9 +281,7 @@ mod test {
 
         accumulator.delete(&1);
 
-        let option = accumulator.get(&1);
-
-        assert!(option.is_none());
+        assert!(accumulator.get(&1).is_none());
     }
 
     #[test]
@@ -289,7 +295,7 @@ mod test {
         }
 
         for count in 0..1000 {
-            let responses = accumulator.get(&count).unwrap();
+            let responses = unwrap_option!(accumulator.get(&count), "");
             assert_eq!(responses.len(), 1);
             assert_eq!(responses[0], 1);
         }
@@ -304,7 +310,7 @@ mod test {
             assert_eq!(accumulator.contains_key(&count), true);
             assert_eq!(accumulator.is_quorum_reached(&count), false);
 
-            let responses = accumulator.get(&count).unwrap();
+            let responses = unwrap_option!(accumulator.get(&count), "");
 
             assert_eq!(responses.len(), 1);
             assert_eq!(responses[0], 1);
