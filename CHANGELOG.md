@@ -1,5 +1,9 @@
 # Accumulator - Change Log
 
+## [0.1.4]
+- Removed a deprecated lint check
+- Minor cleanup and added clippy
+
 ## [0.1.3]
 - Remove wildcards from dependencies
 
