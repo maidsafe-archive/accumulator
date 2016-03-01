@@ -114,9 +114,10 @@ impl<Key: PartialOrd + Ord + Clone, Value: Clone> Accumulator<Key, Value> {
     /// otherwise returns `None`.
     pub fn add(&mut self, key: Key, value: Value) -> Option<Vec<Value>> {
         if self.contains_key(&key) {
-            match self.lru_cache.get_mut(&key) {
-                Some(result) => result.push(value),
-                None => debug!("key found cannot push to value"),
+            if let Some(result) = self.lru_cache.get_mut(&key) {
+                result.push(value)
+            } else {
+                debug!("key found cannot push to value")
             }
         } else {
             let _ = self.lru_cache.insert(key.clone(), vec![value]);
@@ -239,12 +240,12 @@ mod test {
         }
         for _ in 0..quorum_size - 1 {
             for noise_key in &noise_keys {
-                let _ = accumulator.add(noise_key.clone(), random::<u32>());
+                let _ = accumulator.add(*noise_key, random::<u32>());
             }
-            assert!(accumulator.add(key.clone(), random::<u32>()).is_none());
+            assert!(accumulator.add(key, random::<u32>()).is_none());
             assert_eq!(accumulator.is_quorum_reached(&key), false);
         }
-        assert!(accumulator.add(key.clone(), random::<u32>()).is_some());
+        assert!(accumulator.add(key, random::<u32>()).is_some());
         assert_eq!(accumulator.is_quorum_reached(&key), true);
     }
 
