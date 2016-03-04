@@ -7,14 +7,14 @@ license = "GPL-3.0"
 name = "accumulator"
 readme = "README.md"
 repository = "https://github.com/maidsafe/accumulator"
-version = "0.1.4"
+version = "0.2.0"
 
 [dependencies]
-clippy = {version = "~0.0.44", optional = true}
+clippy = {version = "~0.0.45", optional = true}
 log = "~0.3.5"
-lru_time_cache = "~0.2.6"
+lru_time_cache = "~0.2.7"
 time = "~0.1.34"
 
 [dev-dependencies]
-maidsafe_utilities = "~0.2.1"
+maidsafe_utilities = "~0.4.0"
 rand = "~0.3.14"

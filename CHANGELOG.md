@@ -1,5 +1,9 @@
 # Accumulator - Change Log
 
+## [0.2.0]
+- Fixed Clippy warnings
+- Updated dependencies
+
 ## [0.1.4]
 - Removed a deprecated lint check
 - Minor cleanup and added clippy
