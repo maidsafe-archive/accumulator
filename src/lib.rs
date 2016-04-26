@@ -56,13 +56,12 @@ extern crate log;
 extern crate maidsafe_utilities;
 #[cfg(test)]
 extern crate rand;
-extern crate time;
 
 // MaidSafe crates
 extern crate lru_time_cache;
 
 use lru_time_cache::LruCache;
-use time::Duration;
+use std::time::Duration;
 
 /// Implementation of [Accumulator](index.html#accumulator).
 pub struct Accumulator<Key, Value>
