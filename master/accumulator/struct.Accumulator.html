@@ -26,7 +26,7 @@
     
 
     <nav class="sidebar">
-        <a href='../accumulator/index.html'><img src='https://raw.githubusercontent.com/maidsafe/QA/master/Images/maidsafe_logo.png' alt='' width='100'></a>
+        <a href='../accumulator/index.html'><img src='https://raw.githubusercontent.com/maidsafe/QA/master/Images/maidsafe_logo.png' alt='logo' width='100'></a>
         <p class='location'><a href='index.html'>accumulator</a></p><script>window.sidebarCurrent = {name: 'Accumulator', ty: 'struct', relpath: ''};</script><script defer src="sidebar-items.js"></script>
     </nav>
 
@@ -46,7 +46,7 @@
             <a id="toggle-all-docs" href="javascript:void(0)" title="collapse all docs">
                 [<span class='inner'>&#x2212;</span>]
             </a>
-        </span><a id='src-9' class='srclink' href='../src/accumulator/lib.rs.html#68-75' title='goto source code'>[src]</a></span></h1>
+        </span><a id='src-8' class='srclink' href='../src/accumulator/src/lib.rs.html#67-74' title='goto source code'>[src]</a></span></h1>
 <pre class='rust struct'>pub struct Accumulator&lt;Key, Value&gt; <span class='where'>where Key: <a class='trait' href='https://doc.rust-lang.org/nightly/core/cmp/trait.PartialOrd.html' title='core::cmp::PartialOrd'>PartialOrd</a> + <a class='trait' href='https://doc.rust-lang.org/nightly/core/cmp/trait.Ord.html' title='core::cmp::Ord'>Ord</a> + <a class='trait' href='https://doc.rust-lang.org/nightly/core/clone/trait.Clone.html' title='core::clone::Clone'>Clone</a>, Value: <a class='trait' href='https://doc.rust-lang.org/nightly/core/clone/trait.Clone.html' title='core::clone::Clone'>Clone</a></span> {
     // some fields omitted
 }</pre><div class='docblock'><p>Implementation of <a href="index.html#accumulator">Accumulator</a>.</p>
@@ -54,7 +54,7 @@
 <div class='docblock'><p>Constructor for capacity based <code>Accumulator</code>.</p>
 
 <p><code>quorum</code> defines the count at and above which <a href="#method.add"><code>add()</code></a> will return <code>Some()</code>.</p>
-</div><h4 id='method.with_duration' class='method'><code>fn <a href='#method.with_duration' class='fnname'>with_duration</a>(quorum: <a class='primitive' href='https://doc.rust-lang.org/nightly/std/primitive.usize.html'>usize</a>, duration: <a class='struct' href='../time/duration/struct.Duration.html' title='time::duration::Duration'>Duration</a>) -&gt; <a class='struct' href='../accumulator/struct.Accumulator.html' title='accumulator::Accumulator'>Accumulator</a>&lt;Key, Value&gt;</code></h4>
+</div><h4 id='method.with_duration' class='method'><code>fn <a href='#method.with_duration' class='fnname'>with_duration</a>(quorum: <a class='primitive' href='https://doc.rust-lang.org/nightly/std/primitive.usize.html'>usize</a>, duration: <a class='struct' href='https://doc.rust-lang.org/nightly/std/time/duration/struct.Duration.html' title='std::time::duration::Duration'>Duration</a>) -&gt; <a class='struct' href='../accumulator/struct.Accumulator.html' title='accumulator::Accumulator'>Accumulator</a>&lt;Key, Value&gt;</code></h4>
 <div class='docblock'><p>Constructor for time based <code>Accumulator</code>.</p>
 
 <p><code>quorum</code> defines the count at and above which <a href="#method.add"><code>add()</code></a> will return <code>Some()</code>.</p>
@@ -120,7 +120,7 @@ otherwise returns <code>None</code>.</p>
 
                 <p>
                     Search functions by type signature (e.g.
-                    <code>vec -> usize</code>)
+                    <code>vec -> usize</code> or <code>* -> vec</code>)
                 </p>
             </div>
         </div>
