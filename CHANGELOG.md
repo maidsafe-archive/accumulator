@@ -1,5 +1,8 @@
 # Accumulator - Change Log
 
+## [0.3.0]
+- Move from the time crate to std::time.
+
 ## [0.2.0]
 - Fixed Clippy warnings
 - Updated dependencies
