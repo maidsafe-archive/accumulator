@@ -47,13 +47,6 @@
 #![cfg_attr(feature="clippy", deny(clippy, clippy_pedantic))]
 #![cfg_attr(feature="clippy", allow(use_debug))]
 
-// Non-MaidSafe crates
-#[macro_use]
-extern crate log;
-#[cfg(test)]
-#[macro_use]
-#[allow(unused_extern_crates)]  // Only using macros from maidsafe_utilites
-extern crate maidsafe_utilities;
 #[cfg(test)]
 extern crate rand;
 
@@ -61,27 +54,30 @@ extern crate rand;
 extern crate lru_time_cache;
 
 use lru_time_cache::LruCache;
+use std::collections::HashSet;
+use std::hash::Hash;
 use std::time::Duration;
 
-/// Implementation of [Accumulator](index.html#accumulator).
+/// A key-value store limited by size or time, allowing accumulation of multiple values under a
+/// single key.
 pub struct Accumulator<Key, Value>
     where Key: PartialOrd + Ord + Clone,
           Value: Clone
 {
     // Expected threshold for resolve
     quorum: usize,
-    lru_cache: LruCache<Key, Vec<Value>>,
+    lru_cache: LruCache<Key, HashSet<Value>>,
 }
 
 #[cfg_attr(feature="clippy", allow(wrong_self_convention))]
-impl<Key: PartialOrd + Ord + Clone, Value: Clone> Accumulator<Key, Value> {
+impl<Key: PartialOrd + Ord + Clone, Value: Clone + Eq + Hash> Accumulator<Key, Value> {
     /// Constructor for capacity based `Accumulator`.
     ///
     /// `quorum` defines the count at and above which [`add()`](#method.add) will return `Some()`.
     pub fn with_capacity(quorum: usize, capacity: usize) -> Accumulator<Key, Value> {
         Accumulator {
             quorum: quorum,
-            lru_cache: LruCache::<Key, Vec<Value>>::with_capacity(capacity),
+            lru_cache: LruCache::with_capacity(capacity),
         }
     }
 
@@ -91,18 +87,18 @@ impl<Key: PartialOrd + Ord + Clone, Value: Clone> Accumulator<Key, Value> {
     pub fn with_duration(quorum: usize, duration: Duration) -> Accumulator<Key, Value> {
         Accumulator {
             quorum: quorum,
-            lru_cache: LruCache::<Key, Vec<Value>>::with_expiry_duration(duration),
+            lru_cache: LruCache::with_expiry_duration(duration),
         }
     }
 
     /// Returns whether `key` exists in the accumulator or not.
-    pub fn contains_key(&mut self, key: &Key) -> bool {
-        self.lru_cache.contains_key(key)
+    pub fn contains_key(&self, key: &Key) -> bool {
+        self.lru_cache.peek(key).is_some()
     }
 
     /// Returns whether `key` exists and has accumulated `quorum` or more corresponding values.
-    pub fn is_quorum_reached(&mut self, key: &Key) -> bool {
-        match self.lru_cache.get(key) {
+    pub fn is_quorum_reached(&self, key: &Key) -> bool {
+        match self.lru_cache.peek(key) {
             None => false,
             Some(entry) => entry.len() >= self.quorum,
         }
@@ -112,35 +108,19 @@ impl<Key: PartialOrd + Ord + Clone, Value: Clone> Accumulator<Key, Value> {
     ///
     /// Returns the corresponding values for `key` if `quorum` or more values have been accumulated,
     /// otherwise returns `None`.
-    pub fn add(&mut self, key: Key, value: Value) -> Option<Vec<Value>> {
-        if self.contains_key(&key) {
-            if let Some(result) = self.lru_cache.get_mut(&key) {
-                result.push(value)
-            } else {
-                debug!("key found cannot push to value")
-            }
-        } else {
-            let _ = self.lru_cache.insert(key.clone(), vec![value]);
-        }
-
-        // FIXME(dirvine) This iterates too many times,
-        // should combine and answer in one iteration :27/08/2015
-        if self.is_quorum_reached(&key) {
-            match self.lru_cache.get(&key) {
-                Some(value) => Some(value.clone()),
-                None => None,
-            }
+    pub fn add(&mut self, key: Key, value: Value) -> Option<&HashSet<Value>> {
+        let entry = self.lru_cache.entry(key).or_insert_with(HashSet::new);
+        entry.insert(value);
+        if entry.len() >= self.quorum {
+            Some(entry)
         } else {
             None
         }
     }
 
-    /// Retrieves a clone of the values accumulated under `key`, or `None`  if `key` doesn't exist.
-    pub fn get(&mut self, key: &Key) -> Option<Vec<Value>> {
-        match self.lru_cache.get(key) {
-            Some(entry) => Some(entry.clone()),
-            None => None,
-        }
+    /// Returns the values accumulated under `key`, or `None` if `key` doesn't exist.
+    pub fn get(&self, key: &Key) -> Option<&HashSet<Value>> {
+        self.lru_cache.peek(key)
     }
 
     /// Removes `key` and all corresponding accumulated values.
@@ -182,15 +162,15 @@ mod test {
         assert_eq!(accumulator.contains_key(&1), true);
         assert_eq!(accumulator.is_quorum_reached(&1), true);
 
-        let mut responses = unwrap_option!(accumulator.get(&1), "");
-
-        assert_eq!(responses.len(), 2);
-        assert_eq!(responses[0], 3);
-
-        responses = unwrap_option!(accumulator.get(&2), "");
+        let mut responses = accumulator.get(&1).expect("entry 1 does not exist");
 
         assert_eq!(responses.len(), 1);
-        assert_eq!(responses[0], 3);
+        assert!(responses.contains(&3));
+
+        responses = accumulator.get(&2).expect("entry 2 does not exist");
+
+        assert_eq!(responses.len(), 1);
+        assert!(responses.contains(&3));
     }
 
     #[test]
@@ -198,17 +178,17 @@ mod test {
         let quorum_size = 19;
         let mut accumulator = Accumulator::with_capacity(quorum_size, 100);
         let key = random::<i32>();
-        let value = random::<u32>();
         for i in 0..quorum_size - 1 {
+            let value = random::<u32>();
             assert!(accumulator.add(key, value).is_none());
-            let retrieved_value = unwrap_option!(accumulator.get(&key), "");
+            let retrieved_value = accumulator.get(&key).expect("entry `key` does not exist");
             assert_eq!(retrieved_value.len(), i + 1);
             // for response in value { assert_eq!(response, value); };
             assert_eq!(accumulator.is_quorum_reached(&key), false);
         }
-        assert!(accumulator.add(key, value).is_some());
+        assert!(accumulator.add(key, random()).is_some());
         assert_eq!(accumulator.is_quorum_reached(&key), true);
-        let retrieved_value = unwrap_option!(accumulator.get(&key), "");
+        let retrieved_value = accumulator.get(&key).expect("entry `key` does not exist");
         assert_eq!(retrieved_value.len(), quorum_size);
         // for response in value { assert_eq!(response, value); };
     }
@@ -257,10 +237,10 @@ mod test {
         assert_eq!(accumulator.contains_key(&1), true);
         assert_eq!(accumulator.is_quorum_reached(&1), false);
 
-        let mut responses = unwrap_option!(accumulator.get(&1), "");
+        let mut responses: Vec<_> =
+            accumulator.get(&1).expect("entry 1 does not exist").iter().cloned().collect();
 
-        assert_eq!(responses.len(), 1);
-        assert_eq!(responses[0], 1);
+        assert_eq!(responses, vec![1]);
 
         accumulator.delete(&1);
 
@@ -269,15 +249,15 @@ mod test {
         assert!(accumulator.add(1, 1).is_none());
         assert_eq!(accumulator.contains_key(&1), true);
         assert_eq!(accumulator.is_quorum_reached(&1), false);
-        assert!(accumulator.add(1, 1).is_some());
+        assert!(accumulator.add(1, 2).is_some());
         assert_eq!(accumulator.contains_key(&1), true);
         assert_eq!(accumulator.is_quorum_reached(&1), true);
 
-        responses = unwrap_option!(accumulator.get(&1), "");
+        responses = accumulator.get(&1).expect("entry 1 does not exist").iter().cloned().collect();
 
         assert_eq!(responses.len(), 2);
-        assert_eq!(responses[0], 1);
-        assert_eq!(responses[1], 1);
+        assert!(responses.contains(&1));
+        assert!(responses.contains(&2));
 
         accumulator.delete(&1);
 
@@ -295,9 +275,9 @@ mod test {
         }
 
         for count in 0..1000 {
-            let responses = unwrap_option!(accumulator.get(&count), "");
+            let responses = accumulator.get(&count).expect("entry `count` does not exist");
             assert_eq!(responses.len(), 1);
-            assert_eq!(responses[0], 1);
+            assert!(responses.contains(&1));
         }
     }
 
@@ -310,10 +290,10 @@ mod test {
             assert_eq!(accumulator.contains_key(&count), true);
             assert_eq!(accumulator.is_quorum_reached(&count), false);
 
-            let responses = unwrap_option!(accumulator.get(&count), "");
+            let responses = accumulator.get(&count).expect("entry `count` does not exist");
 
             assert_eq!(responses.len(), 1);
-            assert_eq!(responses[0], 1);
+            assert!(responses.contains(&1));
         }
 
         assert!(accumulator.add(1000, 1).is_none());
@@ -322,10 +302,7 @@ mod test {
         assert_eq!(accumulator.cache_size(), 1000);
 
         for count in 0..1000 {
-            let option = accumulator.get(&count);
-
-            assert!(option.is_none());
-
+            assert!(accumulator.get(&count).is_none());
             assert!(accumulator.add(count + 1001, 1).is_none());
             assert_eq!(accumulator.contains_key(&(count + 1001)), true);
             assert_eq!(accumulator.is_quorum_reached(&(count + 1001)), false);
