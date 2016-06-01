@@ -7,10 +7,10 @@ license = "GPL-3.0"
 name = "accumulator"
 readme = "README.md"
 repository = "https://github.com/maidsafe/accumulator"
-version = "0.3.0"
+version = "0.4.0"
 
 [dependencies]
-clippy = {version = "~0.0.70", optional = true}
+clippy = {version = "~0.0.71", optional = true}
 lru_time_cache = "~0.4.0"
 
 [dev-dependencies]
