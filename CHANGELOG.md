@@ -1,5 +1,9 @@
 # Accumulator - Change Log
 
+## [0.4.0]
+- Use `HashSet` instead of `Vec`, so that adding the same entry multiple times
+  is only counted as 1.
+
 ## [0.3.0]
 - Move from the time crate to std::time.
 
