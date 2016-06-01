@@ -1,1 +1,1 @@
-initSidebarItems({"struct":[["Accumulator","Implementation of Accumulator."]]});
+initSidebarItems({"struct":[["Accumulator","A key-value store limited by size or time, allowing accumulation of multiple values under a single key."]]});
