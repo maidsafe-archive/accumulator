@@ -139,6 +139,11 @@ impl<Key: PartialOrd + Ord + Clone, Value: Clone + Eq + Hash> Accumulator<Key, V
     pub fn set_quorum_size(&mut self, new_size: usize) {
         self.quorum = new_size;
     }
+
+    /// Returns the current value for `quorum`.
+    pub fn get_quorum_size(&self) -> usize {
+        self.quorum
+    }
 }
 
 #[cfg(test)]
@@ -315,6 +320,6 @@ mod test {
         let mut accumulator: Accumulator<i32, u32> = Accumulator::with_capacity(2, 100);
         let random = random::<usize>();
         accumulator.set_quorum_size(random);
-        assert_eq!(random, accumulator.quorum);
+        assert_eq!(random, accumulator.get_quorum_size());
     }
 }
