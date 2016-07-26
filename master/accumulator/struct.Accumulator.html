@@ -52,7 +52,8 @@
     // some fields omitted
 }</pre><div class='docblock'><p>A key-value store limited by size or time, allowing accumulation of multiple values under a
 single key.</p>
-</div><h2 id='methods'>Methods</h2><h3 class='impl'><code>impl&lt;Key: <a class='trait' href='https://doc.rust-lang.org/nightly/core/cmp/trait.PartialOrd.html' title='core::cmp::PartialOrd'>PartialOrd</a> + <a class='trait' href='https://doc.rust-lang.org/nightly/core/cmp/trait.Ord.html' title='core::cmp::Ord'>Ord</a> + <a class='trait' href='https://doc.rust-lang.org/nightly/core/clone/trait.Clone.html' title='core::clone::Clone'>Clone</a>, Value: <a class='trait' href='https://doc.rust-lang.org/nightly/core/clone/trait.Clone.html' title='core::clone::Clone'>Clone</a> + <a class='trait' href='https://doc.rust-lang.org/nightly/core/cmp/trait.Eq.html' title='core::cmp::Eq'>Eq</a> + <a class='trait' href='https://doc.rust-lang.org/nightly/core/hash/trait.Hash.html' title='core::hash::Hash'>Hash</a>&gt; <a class='struct' href='../accumulator/struct.Accumulator.html' title='accumulator::Accumulator'>Accumulator</a>&lt;Key, Value&gt;</code></h3><div class='impl-items'><h4 id='method.with_capacity' class='method'><code>fn <a href='#method.with_capacity' class='fnname'>with_capacity</a>(quorum: <a class='primitive' href='https://doc.rust-lang.org/nightly/std/primitive.usize.html'>usize</a>, capacity: <a class='primitive' href='https://doc.rust-lang.org/nightly/std/primitive.usize.html'>usize</a>) -&gt; <a class='struct' href='../accumulator/struct.Accumulator.html' title='accumulator::Accumulator'>Accumulator</a>&lt;Key, Value&gt;</code></h4>
+</div><h2 id='methods'>Methods</h2><h3 class='impl'><span class='in-band'><code>impl&lt;Key: <a class='trait' href='https://doc.rust-lang.org/nightly/core/cmp/trait.PartialOrd.html' title='core::cmp::PartialOrd'>PartialOrd</a> + <a class='trait' href='https://doc.rust-lang.org/nightly/core/cmp/trait.Ord.html' title='core::cmp::Ord'>Ord</a> + <a class='trait' href='https://doc.rust-lang.org/nightly/core/clone/trait.Clone.html' title='core::clone::Clone'>Clone</a>, Value: <a class='trait' href='https://doc.rust-lang.org/nightly/core/clone/trait.Clone.html' title='core::clone::Clone'>Clone</a> + <a class='trait' href='https://doc.rust-lang.org/nightly/core/cmp/trait.Eq.html' title='core::cmp::Eq'>Eq</a> + <a class='trait' href='https://doc.rust-lang.org/nightly/core/hash/trait.Hash.html' title='core::hash::Hash'>Hash</a>&gt; <a class='struct' href='../accumulator/struct.Accumulator.html' title='accumulator::Accumulator'>Accumulator</a>&lt;Key, Value&gt;</code></span><span class='out-of-band'><div class='ghost'></div><a id='src-14' class='srclink' href='../src/accumulator/src/lib.rs.html#73-147' title='goto source code'>[src]</a></span></h3>
+<div class='impl-items'><h4 id='method.with_capacity' class='method'><code>fn <a href='#method.with_capacity' class='fnname'>with_capacity</a>(quorum: <a class='primitive' href='https://doc.rust-lang.org/nightly/std/primitive.usize.html'>usize</a>, capacity: <a class='primitive' href='https://doc.rust-lang.org/nightly/std/primitive.usize.html'>usize</a>) -&gt; <a class='struct' href='../accumulator/struct.Accumulator.html' title='accumulator::Accumulator'>Accumulator</a>&lt;Key, Value&gt;</code></h4>
 <div class='docblock'><p>Constructor for capacity based <code>Accumulator</code>.</p>
 
 <p><code>quorum</code> defines the count at and above which <a href="#method.add"><code>add()</code></a> will return <code>Some()</code>.</p>
@@ -75,10 +76,12 @@ otherwise returns <code>None</code>.</p>
 <div class='docblock'><p>Removes <code>key</code> and all corresponding accumulated values.</p>
 </div><h4 id='method.cache_size' class='method'><code>fn <a href='#method.cache_size' class='fnname'>cache_size</a>(&amp;mut self) -&gt; <a class='primitive' href='https://doc.rust-lang.org/nightly/std/primitive.usize.html'>usize</a></code></h4>
 <div class='docblock'><p>Returns the size of the accumulator, i.e. the number of keys held.</p>
-</div><h4 id='method.set_quorum_size' class='method'><code>fn <a href='#method.set_quorum_size' class='fnname'>set_quorum_size</a>(&amp;mut self, new_size: <a class='primitive' href='https://doc.rust-lang.org/nightly/std/primitive.usize.html'>usize</a>)</code></h4>
+</div><h4 id='method.set_quorum' class='method'><code>fn <a href='#method.set_quorum' class='fnname'>set_quorum</a>(&amp;mut self, new_size: <a class='primitive' href='https://doc.rust-lang.org/nightly/std/primitive.usize.html'>usize</a>)</code></h4>
 <div class='docblock'><p>Sets a new value for <code>quorum</code>.</p>
 
 <p>This has immediate effect, even for existing key-value entries.</p>
+</div><h4 id='method.quorum' class='method'><code>fn <a href='#method.quorum' class='fnname'>quorum</a>(&amp;self) -&gt; <a class='primitive' href='https://doc.rust-lang.org/nightly/std/primitive.usize.html'>usize</a></code></h4>
+<div class='docblock'><p>Returns the current value for <code>quorum</code>.</p>
 </div></div></section>
     <section id='search' class="content hidden"></section>
 
@@ -102,6 +105,8 @@ otherwise returns <code>None</code>.</p>
                     <dd>Move down in search results</dd>
                     <dt>&#9166;</dt>
                     <dd>Go to active search result</dd>
+                    <dt>+</dt>
+                    <dd>Collapse/expand all sections</dd>
                 </dl>
             </div>
 

@@ -362,6 +362,11 @@
 <span id="318">318</span>
 <span id="319">319</span>
 <span id="320">320</span>
+<span id="321">321</span>
+<span id="322">322</span>
+<span id="323">323</span>
+<span id="324">324</span>
+<span id="325">325</span>
 </pre><pre class='rust '>
 <span class='comment'>// Copyright 2015 MaidSafe.net limited.</span>
 <span class='comment'>//</span>
@@ -464,7 +469,7 @@
     <span class='doccomment'>/// Returns whether `key` exists and has accumulated `quorum` or more corresponding values.</span>
     <span class='kw'>pub</span> <span class='kw'>fn</span> <span class='ident'>is_quorum_reached</span>(<span class='kw-2'>&amp;</span><span class='self'>self</span>, <span class='ident'>key</span>: <span class='kw-2'>&amp;</span><span class='ident'>Key</span>) <span class='op'>-&gt;</span> <span class='ident'>bool</span> {
         <span class='kw'>match</span> <span class='self'>self</span>.<span class='ident'>lru_cache</span>.<span class='ident'>peek</span>(<span class='ident'>key</span>) {
-            <span class='prelude-val'>None</span> <span class='op'>=&gt;</span> <span class='boolval'>false</span>,
+            <span class='prelude-val'>None</span> <span class='op'>=&gt;</span> <span class='boolvalue'>false</span>,
             <span class='prelude-val'>Some</span>(<span class='ident'>entry</span>) <span class='op'>=&gt;</span> <span class='ident'>entry</span>.<span class='ident'>len</span>() <span class='op'>&gt;=</span> <span class='self'>self</span>.<span class='ident'>quorum</span>,
         }
     }
@@ -501,14 +506,19 @@
     <span class='doccomment'>/// Sets a new value for `quorum`.</span>
     <span class='doccomment'>///</span>
     <span class='doccomment'>/// This has immediate effect, even for existing key-value entries.</span>
-    <span class='kw'>pub</span> <span class='kw'>fn</span> <span class='ident'>set_quorum_size</span>(<span class='kw-2'>&amp;</span><span class='kw-2'>mut</span> <span class='self'>self</span>, <span class='ident'>new_size</span>: <span class='ident'>usize</span>) {
+    <span class='kw'>pub</span> <span class='kw'>fn</span> <span class='ident'>set_quorum</span>(<span class='kw-2'>&amp;</span><span class='kw-2'>mut</span> <span class='self'>self</span>, <span class='ident'>new_size</span>: <span class='ident'>usize</span>) {
         <span class='self'>self</span>.<span class='ident'>quorum</span> <span class='op'>=</span> <span class='ident'>new_size</span>;
+    }
+
+    <span class='doccomment'>/// Returns the current value for `quorum`.</span>
+    <span class='kw'>pub</span> <span class='kw'>fn</span> <span class='ident'>quorum</span>(<span class='kw-2'>&amp;</span><span class='self'>self</span>) <span class='op'>-&gt;</span> <span class='ident'>usize</span> {
+        <span class='self'>self</span>.<span class='ident'>quorum</span>
     }
 }
 
 <span class='attribute'>#[<span class='ident'>cfg</span>(<span class='ident'>test</span>)]</span>
 <span class='kw'>mod</span> <span class='ident'>test</span> {
-    <span class='kw'>use</span> <span class='ident'>super</span>::<span class='op'>*</span>;
+    <span class='kw'>use</span> <span class='kw'>super</span>::<span class='op'>*</span>;
     <span class='kw'>use</span> <span class='ident'>rand</span>::<span class='ident'>random</span>;
 
     <span class='attribute'>#[<span class='ident'>test</span>]</span>
@@ -516,16 +526,16 @@
         <span class='kw'>let</span> <span class='kw-2'>mut</span> <span class='ident'>accumulator</span> <span class='op'>=</span> <span class='ident'>Accumulator</span>::<span class='ident'>with_capacity</span>(<span class='number'>1</span>, <span class='number'>100</span>);
 
         <span class='macro'>assert</span><span class='macro'>!</span>(<span class='ident'>accumulator</span>.<span class='ident'>add</span>(<span class='number'>2</span>, <span class='number'>3</span>).<span class='ident'>is_some</span>());
-        <span class='macro'>assert_eq</span><span class='macro'>!</span>(<span class='ident'>accumulator</span>.<span class='ident'>contains_key</span>(<span class='kw-2'>&amp;</span><span class='number'>1</span>), <span class='boolval'>false</span>);
-        <span class='macro'>assert_eq</span><span class='macro'>!</span>(<span class='ident'>accumulator</span>.<span class='ident'>contains_key</span>(<span class='kw-2'>&amp;</span><span class='number'>2</span>), <span class='boolval'>true</span>);
-        <span class='macro'>assert_eq</span><span class='macro'>!</span>(<span class='ident'>accumulator</span>.<span class='ident'>is_quorum_reached</span>(<span class='kw-2'>&amp;</span><span class='number'>1</span>), <span class='boolval'>false</span>);
-        <span class='macro'>assert_eq</span><span class='macro'>!</span>(<span class='ident'>accumulator</span>.<span class='ident'>is_quorum_reached</span>(<span class='kw-2'>&amp;</span><span class='number'>2</span>), <span class='boolval'>true</span>);
+        <span class='macro'>assert_eq</span><span class='macro'>!</span>(<span class='ident'>accumulator</span>.<span class='ident'>contains_key</span>(<span class='kw-2'>&amp;</span><span class='number'>1</span>), <span class='boolvalue'>false</span>);
+        <span class='macro'>assert_eq</span><span class='macro'>!</span>(<span class='ident'>accumulator</span>.<span class='ident'>contains_key</span>(<span class='kw-2'>&amp;</span><span class='number'>2</span>), <span class='boolvalue'>true</span>);
+        <span class='macro'>assert_eq</span><span class='macro'>!</span>(<span class='ident'>accumulator</span>.<span class='ident'>is_quorum_reached</span>(<span class='kw-2'>&amp;</span><span class='number'>1</span>), <span class='boolvalue'>false</span>);
+        <span class='macro'>assert_eq</span><span class='macro'>!</span>(<span class='ident'>accumulator</span>.<span class='ident'>is_quorum_reached</span>(<span class='kw-2'>&amp;</span><span class='number'>2</span>), <span class='boolvalue'>true</span>);
         <span class='macro'>assert</span><span class='macro'>!</span>(<span class='ident'>accumulator</span>.<span class='ident'>add</span>(<span class='number'>1</span>, <span class='number'>3</span>).<span class='ident'>is_some</span>());
-        <span class='macro'>assert_eq</span><span class='macro'>!</span>(<span class='ident'>accumulator</span>.<span class='ident'>contains_key</span>(<span class='kw-2'>&amp;</span><span class='number'>1</span>), <span class='boolval'>true</span>);
-        <span class='macro'>assert_eq</span><span class='macro'>!</span>(<span class='ident'>accumulator</span>.<span class='ident'>is_quorum_reached</span>(<span class='kw-2'>&amp;</span><span class='number'>1</span>), <span class='boolval'>true</span>);
+        <span class='macro'>assert_eq</span><span class='macro'>!</span>(<span class='ident'>accumulator</span>.<span class='ident'>contains_key</span>(<span class='kw-2'>&amp;</span><span class='number'>1</span>), <span class='boolvalue'>true</span>);
+        <span class='macro'>assert_eq</span><span class='macro'>!</span>(<span class='ident'>accumulator</span>.<span class='ident'>is_quorum_reached</span>(<span class='kw-2'>&amp;</span><span class='number'>1</span>), <span class='boolvalue'>true</span>);
         <span class='macro'>assert</span><span class='macro'>!</span>(<span class='ident'>accumulator</span>.<span class='ident'>add</span>(<span class='number'>1</span>, <span class='number'>3</span>).<span class='ident'>is_some</span>());
-        <span class='macro'>assert_eq</span><span class='macro'>!</span>(<span class='ident'>accumulator</span>.<span class='ident'>contains_key</span>(<span class='kw-2'>&amp;</span><span class='number'>1</span>), <span class='boolval'>true</span>);
-        <span class='macro'>assert_eq</span><span class='macro'>!</span>(<span class='ident'>accumulator</span>.<span class='ident'>is_quorum_reached</span>(<span class='kw-2'>&amp;</span><span class='number'>1</span>), <span class='boolval'>true</span>);
+        <span class='macro'>assert_eq</span><span class='macro'>!</span>(<span class='ident'>accumulator</span>.<span class='ident'>contains_key</span>(<span class='kw-2'>&amp;</span><span class='number'>1</span>), <span class='boolvalue'>true</span>);
+        <span class='macro'>assert_eq</span><span class='macro'>!</span>(<span class='ident'>accumulator</span>.<span class='ident'>is_quorum_reached</span>(<span class='kw-2'>&amp;</span><span class='number'>1</span>), <span class='boolvalue'>true</span>);
 
         <span class='kw'>let</span> <span class='kw-2'>mut</span> <span class='ident'>responses</span> <span class='op'>=</span> <span class='ident'>accumulator</span>.<span class='ident'>get</span>(<span class='kw-2'>&amp;</span><span class='number'>1</span>).<span class='ident'>expect</span>(<span class='string'>&quot;entry 1 does not exist&quot;</span>);
 
@@ -549,10 +559,10 @@
             <span class='kw'>let</span> <span class='ident'>retrieved_value</span> <span class='op'>=</span> <span class='ident'>accumulator</span>.<span class='ident'>get</span>(<span class='kw-2'>&amp;</span><span class='ident'>key</span>).<span class='ident'>expect</span>(<span class='string'>&quot;entry `key` does not exist&quot;</span>);
             <span class='macro'>assert_eq</span><span class='macro'>!</span>(<span class='ident'>retrieved_value</span>.<span class='ident'>len</span>(), <span class='ident'>i</span> <span class='op'>+</span> <span class='number'>1</span>);
             <span class='comment'>// for response in value { assert_eq!(response, value); };</span>
-            <span class='macro'>assert_eq</span><span class='macro'>!</span>(<span class='ident'>accumulator</span>.<span class='ident'>is_quorum_reached</span>(<span class='kw-2'>&amp;</span><span class='ident'>key</span>), <span class='boolval'>false</span>);
+            <span class='macro'>assert_eq</span><span class='macro'>!</span>(<span class='ident'>accumulator</span>.<span class='ident'>is_quorum_reached</span>(<span class='kw-2'>&amp;</span><span class='ident'>key</span>), <span class='boolvalue'>false</span>);
         }
         <span class='macro'>assert</span><span class='macro'>!</span>(<span class='ident'>accumulator</span>.<span class='ident'>add</span>(<span class='ident'>key</span>, <span class='ident'>random</span>()).<span class='ident'>is_some</span>());
-        <span class='macro'>assert_eq</span><span class='macro'>!</span>(<span class='ident'>accumulator</span>.<span class='ident'>is_quorum_reached</span>(<span class='kw-2'>&amp;</span><span class='ident'>key</span>), <span class='boolval'>true</span>);
+        <span class='macro'>assert_eq</span><span class='macro'>!</span>(<span class='ident'>accumulator</span>.<span class='ident'>is_quorum_reached</span>(<span class='kw-2'>&amp;</span><span class='ident'>key</span>), <span class='boolvalue'>true</span>);
         <span class='kw'>let</span> <span class='ident'>retrieved_value</span> <span class='op'>=</span> <span class='ident'>accumulator</span>.<span class='ident'>get</span>(<span class='kw-2'>&amp;</span><span class='ident'>key</span>).<span class='ident'>expect</span>(<span class='string'>&quot;entry `key` does not exist&quot;</span>);
         <span class='macro'>assert_eq</span><span class='macro'>!</span>(<span class='ident'>retrieved_value</span>.<span class='ident'>len</span>(), <span class='ident'>quorum_size</span>);
         <span class='comment'>// for response in value { assert_eq!(response, value); };</span>
@@ -565,10 +575,10 @@
         <span class='kw'>let</span> <span class='ident'>key</span> <span class='op'>=</span> <span class='ident'>random</span>::<span class='op'>&lt;</span><span class='ident'>i32</span><span class='op'>&gt;</span>();
         <span class='kw'>for</span> _ <span class='kw'>in</span> <span class='number'>0</span>..<span class='ident'>quorum_size</span> <span class='op'>-</span> <span class='number'>1</span> {
             <span class='macro'>assert</span><span class='macro'>!</span>(<span class='ident'>accumulator</span>.<span class='ident'>add</span>(<span class='ident'>key</span>, <span class='ident'>random</span>::<span class='op'>&lt;</span><span class='ident'>u32</span><span class='op'>&gt;</span>()).<span class='ident'>is_none</span>());
-            <span class='macro'>assert_eq</span><span class='macro'>!</span>(<span class='ident'>accumulator</span>.<span class='ident'>is_quorum_reached</span>(<span class='kw-2'>&amp;</span><span class='ident'>key</span>), <span class='boolval'>false</span>);
+            <span class='macro'>assert_eq</span><span class='macro'>!</span>(<span class='ident'>accumulator</span>.<span class='ident'>is_quorum_reached</span>(<span class='kw-2'>&amp;</span><span class='ident'>key</span>), <span class='boolvalue'>false</span>);
         }
         <span class='macro'>assert</span><span class='macro'>!</span>(<span class='ident'>accumulator</span>.<span class='ident'>add</span>(<span class='ident'>key</span>, <span class='ident'>random</span>::<span class='op'>&lt;</span><span class='ident'>u32</span><span class='op'>&gt;</span>()).<span class='ident'>is_some</span>());
-        <span class='macro'>assert_eq</span><span class='macro'>!</span>(<span class='ident'>accumulator</span>.<span class='ident'>is_quorum_reached</span>(<span class='kw-2'>&amp;</span><span class='ident'>key</span>), <span class='boolval'>true</span>);
+        <span class='macro'>assert_eq</span><span class='macro'>!</span>(<span class='ident'>accumulator</span>.<span class='ident'>is_quorum_reached</span>(<span class='kw-2'>&amp;</span><span class='ident'>key</span>), <span class='boolvalue'>true</span>);
     }
 
     <span class='attribute'>#[<span class='ident'>test</span>]</span>
@@ -588,10 +598,10 @@
                 <span class='kw'>let</span> _ <span class='op'>=</span> <span class='ident'>accumulator</span>.<span class='ident'>add</span>(<span class='op'>*</span><span class='ident'>noise_key</span>, <span class='ident'>random</span>::<span class='op'>&lt;</span><span class='ident'>u32</span><span class='op'>&gt;</span>());
             }
             <span class='macro'>assert</span><span class='macro'>!</span>(<span class='ident'>accumulator</span>.<span class='ident'>add</span>(<span class='ident'>key</span>, <span class='ident'>random</span>::<span class='op'>&lt;</span><span class='ident'>u32</span><span class='op'>&gt;</span>()).<span class='ident'>is_none</span>());
-            <span class='macro'>assert_eq</span><span class='macro'>!</span>(<span class='ident'>accumulator</span>.<span class='ident'>is_quorum_reached</span>(<span class='kw-2'>&amp;</span><span class='ident'>key</span>), <span class='boolval'>false</span>);
+            <span class='macro'>assert_eq</span><span class='macro'>!</span>(<span class='ident'>accumulator</span>.<span class='ident'>is_quorum_reached</span>(<span class='kw-2'>&amp;</span><span class='ident'>key</span>), <span class='boolvalue'>false</span>);
         }
         <span class='macro'>assert</span><span class='macro'>!</span>(<span class='ident'>accumulator</span>.<span class='ident'>add</span>(<span class='ident'>key</span>, <span class='ident'>random</span>::<span class='op'>&lt;</span><span class='ident'>u32</span><span class='op'>&gt;</span>()).<span class='ident'>is_some</span>());
-        <span class='macro'>assert_eq</span><span class='macro'>!</span>(<span class='ident'>accumulator</span>.<span class='ident'>is_quorum_reached</span>(<span class='kw-2'>&amp;</span><span class='ident'>key</span>), <span class='boolval'>true</span>);
+        <span class='macro'>assert_eq</span><span class='macro'>!</span>(<span class='ident'>accumulator</span>.<span class='ident'>is_quorum_reached</span>(<span class='kw-2'>&amp;</span><span class='ident'>key</span>), <span class='boolvalue'>true</span>);
     }
 
     <span class='attribute'>#[<span class='ident'>test</span>]</span>
@@ -599,8 +609,8 @@
         <span class='kw'>let</span> <span class='kw-2'>mut</span> <span class='ident'>accumulator</span> <span class='op'>=</span> <span class='ident'>Accumulator</span>::<span class='ident'>with_capacity</span>(<span class='number'>2</span>, <span class='number'>100</span>);
 
         <span class='macro'>assert</span><span class='macro'>!</span>(<span class='ident'>accumulator</span>.<span class='ident'>add</span>(<span class='number'>1</span>, <span class='number'>1</span>).<span class='ident'>is_none</span>());
-        <span class='macro'>assert_eq</span><span class='macro'>!</span>(<span class='ident'>accumulator</span>.<span class='ident'>contains_key</span>(<span class='kw-2'>&amp;</span><span class='number'>1</span>), <span class='boolval'>true</span>);
-        <span class='macro'>assert_eq</span><span class='macro'>!</span>(<span class='ident'>accumulator</span>.<span class='ident'>is_quorum_reached</span>(<span class='kw-2'>&amp;</span><span class='number'>1</span>), <span class='boolval'>false</span>);
+        <span class='macro'>assert_eq</span><span class='macro'>!</span>(<span class='ident'>accumulator</span>.<span class='ident'>contains_key</span>(<span class='kw-2'>&amp;</span><span class='number'>1</span>), <span class='boolvalue'>true</span>);
+        <span class='macro'>assert_eq</span><span class='macro'>!</span>(<span class='ident'>accumulator</span>.<span class='ident'>is_quorum_reached</span>(<span class='kw-2'>&amp;</span><span class='number'>1</span>), <span class='boolvalue'>false</span>);
 
         <span class='kw'>let</span> <span class='kw-2'>mut</span> <span class='ident'>responses</span>: <span class='ident'>Vec</span><span class='op'>&lt;</span>_<span class='op'>&gt;</span> <span class='op'>=</span>
             <span class='ident'>accumulator</span>.<span class='ident'>get</span>(<span class='kw-2'>&amp;</span><span class='number'>1</span>).<span class='ident'>expect</span>(<span class='string'>&quot;entry 1 does not exist&quot;</span>).<span class='ident'>iter</span>().<span class='ident'>cloned</span>().<span class='ident'>collect</span>();
@@ -612,11 +622,11 @@
         <span class='macro'>assert</span><span class='macro'>!</span>(<span class='ident'>accumulator</span>.<span class='ident'>get</span>(<span class='kw-2'>&amp;</span><span class='number'>1</span>).<span class='ident'>is_none</span>());
 
         <span class='macro'>assert</span><span class='macro'>!</span>(<span class='ident'>accumulator</span>.<span class='ident'>add</span>(<span class='number'>1</span>, <span class='number'>1</span>).<span class='ident'>is_none</span>());
-        <span class='macro'>assert_eq</span><span class='macro'>!</span>(<span class='ident'>accumulator</span>.<span class='ident'>contains_key</span>(<span class='kw-2'>&amp;</span><span class='number'>1</span>), <span class='boolval'>true</span>);
-        <span class='macro'>assert_eq</span><span class='macro'>!</span>(<span class='ident'>accumulator</span>.<span class='ident'>is_quorum_reached</span>(<span class='kw-2'>&amp;</span><span class='number'>1</span>), <span class='boolval'>false</span>);
+        <span class='macro'>assert_eq</span><span class='macro'>!</span>(<span class='ident'>accumulator</span>.<span class='ident'>contains_key</span>(<span class='kw-2'>&amp;</span><span class='number'>1</span>), <span class='boolvalue'>true</span>);
+        <span class='macro'>assert_eq</span><span class='macro'>!</span>(<span class='ident'>accumulator</span>.<span class='ident'>is_quorum_reached</span>(<span class='kw-2'>&amp;</span><span class='number'>1</span>), <span class='boolvalue'>false</span>);
         <span class='macro'>assert</span><span class='macro'>!</span>(<span class='ident'>accumulator</span>.<span class='ident'>add</span>(<span class='number'>1</span>, <span class='number'>2</span>).<span class='ident'>is_some</span>());
-        <span class='macro'>assert_eq</span><span class='macro'>!</span>(<span class='ident'>accumulator</span>.<span class='ident'>contains_key</span>(<span class='kw-2'>&amp;</span><span class='number'>1</span>), <span class='boolval'>true</span>);
-        <span class='macro'>assert_eq</span><span class='macro'>!</span>(<span class='ident'>accumulator</span>.<span class='ident'>is_quorum_reached</span>(<span class='kw-2'>&amp;</span><span class='number'>1</span>), <span class='boolval'>true</span>);
+        <span class='macro'>assert_eq</span><span class='macro'>!</span>(<span class='ident'>accumulator</span>.<span class='ident'>contains_key</span>(<span class='kw-2'>&amp;</span><span class='number'>1</span>), <span class='boolvalue'>true</span>);
+        <span class='macro'>assert_eq</span><span class='macro'>!</span>(<span class='ident'>accumulator</span>.<span class='ident'>is_quorum_reached</span>(<span class='kw-2'>&amp;</span><span class='number'>1</span>), <span class='boolvalue'>true</span>);
 
         <span class='ident'>responses</span> <span class='op'>=</span> <span class='ident'>accumulator</span>.<span class='ident'>get</span>(<span class='kw-2'>&amp;</span><span class='number'>1</span>).<span class='ident'>expect</span>(<span class='string'>&quot;entry 1 does not exist&quot;</span>).<span class='ident'>iter</span>().<span class='ident'>cloned</span>().<span class='ident'>collect</span>();
 
@@ -635,8 +645,8 @@
 
         <span class='kw'>for</span> <span class='ident'>count</span> <span class='kw'>in</span> <span class='number'>0</span>..<span class='number'>1000</span> {
             <span class='macro'>assert</span><span class='macro'>!</span>(<span class='ident'>accumulator</span>.<span class='ident'>add</span>(<span class='ident'>count</span>, <span class='number'>1</span>).<span class='ident'>is_some</span>());
-            <span class='macro'>assert_eq</span><span class='macro'>!</span>(<span class='ident'>accumulator</span>.<span class='ident'>contains_key</span>(<span class='kw-2'>&amp;</span><span class='ident'>count</span>), <span class='boolval'>true</span>);
-            <span class='macro'>assert_eq</span><span class='macro'>!</span>(<span class='ident'>accumulator</span>.<span class='ident'>is_quorum_reached</span>(<span class='kw-2'>&amp;</span><span class='ident'>count</span>), <span class='boolval'>true</span>);
+            <span class='macro'>assert_eq</span><span class='macro'>!</span>(<span class='ident'>accumulator</span>.<span class='ident'>contains_key</span>(<span class='kw-2'>&amp;</span><span class='ident'>count</span>), <span class='boolvalue'>true</span>);
+            <span class='macro'>assert_eq</span><span class='macro'>!</span>(<span class='ident'>accumulator</span>.<span class='ident'>is_quorum_reached</span>(<span class='kw-2'>&amp;</span><span class='ident'>count</span>), <span class='boolvalue'>true</span>);
         }
 
         <span class='kw'>for</span> <span class='ident'>count</span> <span class='kw'>in</span> <span class='number'>0</span>..<span class='number'>1000</span> {
@@ -652,8 +662,8 @@
 
         <span class='kw'>for</span> <span class='ident'>count</span> <span class='kw'>in</span> <span class='number'>0</span>..<span class='number'>1000</span> {
             <span class='macro'>assert</span><span class='macro'>!</span>(<span class='ident'>accumulator</span>.<span class='ident'>add</span>(<span class='ident'>count</span>, <span class='number'>1</span>).<span class='ident'>is_none</span>());
-            <span class='macro'>assert_eq</span><span class='macro'>!</span>(<span class='ident'>accumulator</span>.<span class='ident'>contains_key</span>(<span class='kw-2'>&amp;</span><span class='ident'>count</span>), <span class='boolval'>true</span>);
-            <span class='macro'>assert_eq</span><span class='macro'>!</span>(<span class='ident'>accumulator</span>.<span class='ident'>is_quorum_reached</span>(<span class='kw-2'>&amp;</span><span class='ident'>count</span>), <span class='boolval'>false</span>);
+            <span class='macro'>assert_eq</span><span class='macro'>!</span>(<span class='ident'>accumulator</span>.<span class='ident'>contains_key</span>(<span class='kw-2'>&amp;</span><span class='ident'>count</span>), <span class='boolvalue'>true</span>);
+            <span class='macro'>assert_eq</span><span class='macro'>!</span>(<span class='ident'>accumulator</span>.<span class='ident'>is_quorum_reached</span>(<span class='kw-2'>&amp;</span><span class='ident'>count</span>), <span class='boolvalue'>false</span>);
 
             <span class='kw'>let</span> <span class='ident'>responses</span> <span class='op'>=</span> <span class='ident'>accumulator</span>.<span class='ident'>get</span>(<span class='kw-2'>&amp;</span><span class='ident'>count</span>).<span class='ident'>expect</span>(<span class='string'>&quot;entry `count` does not exist&quot;</span>);
 
@@ -662,25 +672,25 @@
         }
 
         <span class='macro'>assert</span><span class='macro'>!</span>(<span class='ident'>accumulator</span>.<span class='ident'>add</span>(<span class='number'>1000</span>, <span class='number'>1</span>).<span class='ident'>is_none</span>());
-        <span class='macro'>assert_eq</span><span class='macro'>!</span>(<span class='ident'>accumulator</span>.<span class='ident'>contains_key</span>(<span class='kw-2'>&amp;</span><span class='number'>1000</span>), <span class='boolval'>true</span>);
-        <span class='macro'>assert_eq</span><span class='macro'>!</span>(<span class='ident'>accumulator</span>.<span class='ident'>is_quorum_reached</span>(<span class='kw-2'>&amp;</span><span class='number'>1000</span>), <span class='boolval'>false</span>);
+        <span class='macro'>assert_eq</span><span class='macro'>!</span>(<span class='ident'>accumulator</span>.<span class='ident'>contains_key</span>(<span class='kw-2'>&amp;</span><span class='number'>1000</span>), <span class='boolvalue'>true</span>);
+        <span class='macro'>assert_eq</span><span class='macro'>!</span>(<span class='ident'>accumulator</span>.<span class='ident'>is_quorum_reached</span>(<span class='kw-2'>&amp;</span><span class='number'>1000</span>), <span class='boolvalue'>false</span>);
         <span class='macro'>assert_eq</span><span class='macro'>!</span>(<span class='ident'>accumulator</span>.<span class='ident'>cache_size</span>(), <span class='number'>1000</span>);
 
         <span class='kw'>for</span> <span class='ident'>count</span> <span class='kw'>in</span> <span class='number'>0</span>..<span class='number'>1000</span> {
             <span class='macro'>assert</span><span class='macro'>!</span>(<span class='ident'>accumulator</span>.<span class='ident'>get</span>(<span class='kw-2'>&amp;</span><span class='ident'>count</span>).<span class='ident'>is_none</span>());
             <span class='macro'>assert</span><span class='macro'>!</span>(<span class='ident'>accumulator</span>.<span class='ident'>add</span>(<span class='ident'>count</span> <span class='op'>+</span> <span class='number'>1001</span>, <span class='number'>1</span>).<span class='ident'>is_none</span>());
-            <span class='macro'>assert_eq</span><span class='macro'>!</span>(<span class='ident'>accumulator</span>.<span class='ident'>contains_key</span>(<span class='kw-2'>&amp;</span>(<span class='ident'>count</span> <span class='op'>+</span> <span class='number'>1001</span>)), <span class='boolval'>true</span>);
-            <span class='macro'>assert_eq</span><span class='macro'>!</span>(<span class='ident'>accumulator</span>.<span class='ident'>is_quorum_reached</span>(<span class='kw-2'>&amp;</span>(<span class='ident'>count</span> <span class='op'>+</span> <span class='number'>1001</span>)), <span class='boolval'>false</span>);
+            <span class='macro'>assert_eq</span><span class='macro'>!</span>(<span class='ident'>accumulator</span>.<span class='ident'>contains_key</span>(<span class='kw-2'>&amp;</span>(<span class='ident'>count</span> <span class='op'>+</span> <span class='number'>1001</span>)), <span class='boolvalue'>true</span>);
+            <span class='macro'>assert_eq</span><span class='macro'>!</span>(<span class='ident'>accumulator</span>.<span class='ident'>is_quorum_reached</span>(<span class='kw-2'>&amp;</span>(<span class='ident'>count</span> <span class='op'>+</span> <span class='number'>1001</span>)), <span class='boolvalue'>false</span>);
             <span class='macro'>assert_eq</span><span class='macro'>!</span>(<span class='ident'>accumulator</span>.<span class='ident'>cache_size</span>(), <span class='number'>1000</span>);
         }
     }
 
     <span class='attribute'>#[<span class='ident'>test</span>]</span>
-    <span class='kw'>fn</span> <span class='ident'>set_quorum_size</span>() {
+    <span class='kw'>fn</span> <span class='ident'>set_quorum</span>() {
         <span class='kw'>let</span> <span class='kw-2'>mut</span> <span class='ident'>accumulator</span>: <span class='ident'>Accumulator</span><span class='op'>&lt;</span><span class='ident'>i32</span>, <span class='ident'>u32</span><span class='op'>&gt;</span> <span class='op'>=</span> <span class='ident'>Accumulator</span>::<span class='ident'>with_capacity</span>(<span class='number'>2</span>, <span class='number'>100</span>);
         <span class='kw'>let</span> <span class='ident'>random</span> <span class='op'>=</span> <span class='ident'>random</span>::<span class='op'>&lt;</span><span class='ident'>usize</span><span class='op'>&gt;</span>();
-        <span class='ident'>accumulator</span>.<span class='ident'>set_quorum_size</span>(<span class='ident'>random</span>);
-        <span class='macro'>assert_eq</span><span class='macro'>!</span>(<span class='ident'>random</span>, <span class='ident'>accumulator</span>.<span class='ident'>quorum</span>);
+        <span class='ident'>accumulator</span>.<span class='ident'>set_quorum</span>(<span class='ident'>random</span>);
+        <span class='macro'>assert_eq</span><span class='macro'>!</span>(<span class='ident'>random</span>, <span class='ident'>accumulator</span>.<span class='ident'>quorum</span>());
     }
 }
 </pre>
@@ -707,6 +717,8 @@
                     <dd>Move down in search results</dd>
                     <dt>&#9166;</dt>
                     <dd>Go to active search result</dd>
+                    <dt>+</dt>
+                    <dd>Collapse/expand all sections</dd>
                 </dl>
             </div>
 

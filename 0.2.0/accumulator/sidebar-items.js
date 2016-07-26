@@ -1,1 +1,0 @@
-initSidebarItems({"struct":[["Accumulator","Implementation of Accumulator."]]});
