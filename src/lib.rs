@@ -136,7 +136,7 @@ impl<Key: PartialOrd + Ord + Clone, Value: Clone + Eq + Hash> Accumulator<Key, V
     /// Sets a new value for `quorum`.
     ///
     /// This has immediate effect, even for existing key-value entries.
-    pub fn set_quorum_size(&mut self, new_size: usize) {
+    pub fn set_quorum(&mut self, new_size: usize) {
         self.quorum = new_size;
     }
 
@@ -316,10 +316,10 @@ mod test {
     }
 
     #[test]
-    fn set_quorum_size() {
+    fn set_quorum() {
         let mut accumulator: Accumulator<i32, u32> = Accumulator::with_capacity(2, 100);
         let random = random::<usize>();
-        accumulator.set_quorum_size(random);
+        accumulator.set_quorum(random);
         assert_eq!(random, accumulator.quorum());
     }
 }
