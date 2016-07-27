@@ -1,5 +1,9 @@
 # Accumulator - Change Log
 
+## [0.5.0]
+- Add/rename `quorum` and `set_quorum` methods.
+- Some documentation updates.
+
 ## [0.4.0]
 - Use `HashSet` instead of `Vec`, so that adding the same entry multiple times
   is only counted as 1.
