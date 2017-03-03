@@ -34,8 +34,7 @@ script:
     elif [ "${TRAVIS_OS_NAME}" = linux ]; then
       (
         set -x;
-        cargo clippy &&
-        cargo clippy --profile test
+        cargo clippy && cargo clippy --profile test
       );
     fi
 before_cache:

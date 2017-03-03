@@ -1,7 +1,7 @@
 [package]
 authors = ["MaidSafe Developers <dev@maidsafe.net>"]
 description = "A key-value store limited by size or time, allowing accumulation of multiple values under a single key."
-documentation = "http://docs.maidsafe.net/accumulator/latest"
+documentation = "https://docs.rs/accumulator"
 homepage = "http://maidsafe.net"
 license = "GPL-3.0"
 name = "accumulator"
@@ -10,7 +10,6 @@ repository = "https://github.com/maidsafe/accumulator"
 version = "0.5.0"
 
 [dependencies]
-clippy = {version = "~0.0.79", optional = true}
 lru_time_cache = "~0.4.0"
 
 [dev-dependencies]
