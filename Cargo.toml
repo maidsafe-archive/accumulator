@@ -2,7 +2,7 @@
 authors = ["MaidSafe Developers <dev@maidsafe.net>"]
 description = "A key-value store limited by size or time, allowing accumulation of multiple values under a single key."
 documentation = "https://docs.rs/accumulator"
-homepage = "http://maidsafe.net"
+homepage = "https://maidsafe.net"
 license = "GPL-3.0"
 name = "accumulator"
 readme = "README.md"

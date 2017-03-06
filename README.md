@@ -7,7 +7,7 @@
 |[![](http://meritbadge.herokuapp.com/accumulator)](https://crates.io/crates/accumulator)|[![Documentation](https://docs.rs/accumulator/badge.svg)](https://docs.rs/accumulator)|[![Build Status](https://travis-ci.org/maidsafe/accumulator.svg?branch=master)](https://travis-ci.org/maidsafe/accumulator)|[![Build status](https://ci.appveyor.com/api/projects/status/1imtexgsshnpxnvn/branch/master?svg=true)](https://ci.appveyor.com/project/MaidSafe-QA/accumulator/branch/master)|[![Stories in Ready](https://badge.waffle.io/maidsafe/accumulator.png?label=ready&title=Ready)](https://waffle.io/maidsafe/accumulator)|
 
 | [MaidSafe website](https://maidsafe.net) | [SAFE Dev Forum](https://forum.safedev.org) | [SAFE Network Forum](https://safenetforum.org) |
-|:-------:|:-------:|:-------:|
+|:----------------------------------------:|:-------------------------------------------:|:----------------------------------------------:|
 
 ## Overview
 
@@ -31,6 +31,5 @@ at your option.
 ## Contribution
 
 Unless you explicitly state otherwise, any contribution intentionally submitted for inclusion in the
-work by you, as defined in the MaidSafe Contributor Agreement, version 1.1 ([CONTRIBUTOR]
-(CONTRIBUTOR)), shall be dual licensed as above, and you agree to be bound by the terms of the
-MaidSafe Contributor Agreement, version 1.1.
+work by you, as defined in the MaidSafe Contributor Agreement ([CONTRIBUTOR](CONTRIBUTOR)), shall be
+dual licensed as above, and you agree to be bound by the terms of the MaidSafe Contributor Agreement.
