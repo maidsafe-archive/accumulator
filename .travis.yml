@@ -10,6 +10,9 @@ rust:
   - stable
   - nightly-2016-12-19
 sudo: false
+branches:
+  only:
+    - master
 cache:
   cargo: true
 before_script:
@@ -28,8 +31,7 @@ script:
       (
         set -x;
         cargo fmt -- --write-mode=diff &&
-        cargo rustc --verbose -- -Zno-trans &&
-        cargo test  --verbose
+        cargo test --release --verbose
       );
     elif [ "${TRAVIS_OS_NAME}" = linux ]; then
       (

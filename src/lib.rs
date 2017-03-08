@@ -5,8 +5,8 @@
 // licence you accepted on initial access to the Software (the "Licences").
 //
 // By contributing code to the SAFE Network Software, or to this project generally, you agree to be
-// bound by the terms of the MaidSafe Contributor Agreement, version 1.0.  This, along with the
-// Licenses can be found in the root directory of this project at LICENSE, COPYING and CONTRIBUTOR.
+// bound by the terms of the MaidSafe Contributor Agreement.  This, along with the Licenses can be
+// found in the root directory of this project at LICENSE, COPYING and CONTRIBUTOR.
 //
 // Unless required by applicable law or agreed to in writing, the SAFE Network Software distributed
 // under the GPL Licence is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
@@ -25,8 +25,8 @@
 
 #![doc(html_logo_url =
            "https://raw.githubusercontent.com/maidsafe/QA/master/Images/maidsafe_logo.png",
-       html_favicon_url = "http://maidsafe.net/img/favicon.ico",
-       html_root_url = "http://maidsafe.github.io/accumulator")]
+       html_favicon_url = "https://maidsafe.net/img/favicon.ico",
+       html_root_url = "https://docs.rs/accumulator")]
 
 // For explanation of lint checks, run `rustc -W help` or see
 // https://github.com/maidsafe/QA/blob/master/Documentation/Rust%20Lint%20Checks.md
@@ -236,8 +236,11 @@ mod test {
         assert_eq!(accumulator.contains_key(&1), true);
         assert_eq!(accumulator.is_quorum_reached(&1), false);
 
-        let mut responses: Vec<_> =
-            accumulator.get(&1).expect("entry 1 does not exist").iter().cloned().collect();
+        let mut responses: Vec<_> = accumulator.get(&1)
+            .expect("entry 1 does not exist")
+            .iter()
+            .cloned()
+            .collect();
 
         assert_eq!(responses, vec![1]);
 
@@ -252,7 +255,11 @@ mod test {
         assert_eq!(accumulator.contains_key(&1), true);
         assert_eq!(accumulator.is_quorum_reached(&1), true);
 
-        responses = accumulator.get(&1).expect("entry 1 does not exist").iter().cloned().collect();
+        responses = accumulator.get(&1)
+            .expect("entry 1 does not exist")
+            .iter()
+            .cloned()
+            .collect();
 
         assert_eq!(responses.len(), 2);
         assert!(responses.contains(&1));
