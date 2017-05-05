@@ -180,14 +180,18 @@ mod test {
         for i in 0..quorum_size - 1 {
             let value = random::<u32>();
             assert!(accumulator.add(key, value).is_none());
-            let retrieved_value = accumulator.get(&key).expect("entry `key` does not exist");
+            let retrieved_value = accumulator
+                .get(&key)
+                .expect("entry `key` does not exist");
             assert_eq!(retrieved_value.len(), i + 1);
             // for response in value { assert_eq!(response, value); };
             assert_eq!(accumulator.is_quorum_reached(&key), false);
         }
         assert!(accumulator.add(key, random()).is_some());
         assert_eq!(accumulator.is_quorum_reached(&key), true);
-        let retrieved_value = accumulator.get(&key).expect("entry `key` does not exist");
+        let retrieved_value = accumulator
+            .get(&key)
+            .expect("entry `key` does not exist");
         assert_eq!(retrieved_value.len(), quorum_size);
         // for response in value { assert_eq!(response, value); };
     }
@@ -236,7 +240,8 @@ mod test {
         assert_eq!(accumulator.contains_key(&1), true);
         assert_eq!(accumulator.is_quorum_reached(&1), false);
 
-        let mut responses: Vec<_> = accumulator.get(&1)
+        let mut responses: Vec<_> = accumulator
+            .get(&1)
             .expect("entry 1 does not exist")
             .iter()
             .cloned()
@@ -255,7 +260,8 @@ mod test {
         assert_eq!(accumulator.contains_key(&1), true);
         assert_eq!(accumulator.is_quorum_reached(&1), true);
 
-        responses = accumulator.get(&1)
+        responses = accumulator
+            .get(&1)
             .expect("entry 1 does not exist")
             .iter()
             .cloned()
@@ -281,7 +287,9 @@ mod test {
         }
 
         for count in 0..1000 {
-            let responses = accumulator.get(&count).expect("entry `count` does not exist");
+            let responses = accumulator
+                .get(&count)
+                .expect("entry `count` does not exist");
             assert_eq!(responses.len(), 1);
             assert!(responses.contains(&1));
         }
@@ -296,7 +304,9 @@ mod test {
             assert_eq!(accumulator.contains_key(&count), true);
             assert_eq!(accumulator.is_quorum_reached(&count), false);
 
-            let responses = accumulator.get(&count).expect("entry `count` does not exist");
+            let responses = accumulator
+                .get(&count)
+                .expect("entry `count` does not exist");
 
             assert_eq!(responses.len(), 1);
             assert!(responses.contains(&1));
