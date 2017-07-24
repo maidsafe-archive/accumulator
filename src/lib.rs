@@ -56,8 +56,9 @@ use std::time::Duration;
 /// A key-value store limited by size or time, allowing accumulation of multiple values under a
 /// single key.
 pub struct Accumulator<Key, Value>
-    where Key: PartialOrd + Ord + Clone,
-          Value: Clone
+where
+    Key: PartialOrd + Ord + Clone,
+    Value: Clone,
 {
     // Expected threshold for resolve
     quorum: usize,
@@ -180,18 +181,14 @@ mod test {
         for i in 0..quorum_size - 1 {
             let value = random::<u32>();
             assert!(accumulator.add(key, value).is_none());
-            let retrieved_value = accumulator
-                .get(&key)
-                .expect("entry `key` does not exist");
+            let retrieved_value = accumulator.get(&key).expect("entry `key` does not exist");
             assert_eq!(retrieved_value.len(), i + 1);
             // for response in value { assert_eq!(response, value); };
             assert_eq!(accumulator.is_quorum_reached(&key), false);
         }
         assert!(accumulator.add(key, random()).is_some());
         assert_eq!(accumulator.is_quorum_reached(&key), true);
-        let retrieved_value = accumulator
-            .get(&key)
-            .expect("entry `key` does not exist");
+        let retrieved_value = accumulator.get(&key).expect("entry `key` does not exist");
         assert_eq!(retrieved_value.len(), quorum_size);
         // for response in value { assert_eq!(response, value); };
     }
@@ -287,9 +284,9 @@ mod test {
         }
 
         for count in 0..1000 {
-            let responses = accumulator
-                .get(&count)
-                .expect("entry `count` does not exist");
+            let responses = accumulator.get(&count).expect(
+                "entry `count` does not exist",
+            );
             assert_eq!(responses.len(), 1);
             assert!(responses.contains(&1));
         }
@@ -304,9 +301,9 @@ mod test {
             assert_eq!(accumulator.contains_key(&count), true);
             assert_eq!(accumulator.is_quorum_reached(&count), false);
 
-            let responses = accumulator
-                .get(&count)
-                .expect("entry `count` does not exist");
+            let responses = accumulator.get(&count).expect(
+                "entry `count` does not exist",
+            );
 
             assert_eq!(responses.len(), 1);
             assert!(responses.contains(&1));
