@@ -1,5 +1,11 @@
 # Accumulator - Change Log
 
+## [0.6.0]
+- Use rust 1.19 stable / 2017-07-20 nightly
+- rustfmt 0.9.0 and clippy-0.0.144
+- Replace -Zno-trans with cargo check
+- Update CI scripts and README
+
 ## [0.5.0]
 - Add/rename `quorum` and `set_quorum` methods.
 - Some documentation updates.
