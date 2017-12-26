@@ -39,7 +39,7 @@
         unused_comparisons, unused_features, unused_parens, while_true)]
 #![warn(trivial_casts, trivial_numeric_casts, unused_extern_crates, unused_import_braces,
         unused_qualifications, unused_results)]
-#![allow(box_pointers, fat_ptr_transmutes, missing_copy_implementations,
+#![allow(box_pointers, missing_copy_implementations,
          missing_debug_implementations, variant_size_differences)]
 
 #[cfg(test)]
@@ -105,7 +105,7 @@ impl<Key: PartialOrd + Ord + Clone, Value: Clone + Eq + Hash> Accumulator<Key, V
     /// otherwise returns `None`.
     pub fn add(&mut self, key: Key, value: Value) -> Option<&HashSet<Value>> {
         let entry = self.lru_cache.entry(key).or_insert_with(HashSet::new);
-        entry.insert(value);
+        let _ = entry.insert(value);
         if entry.len() >= self.quorum {
             Some(entry)
         } else {

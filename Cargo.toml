@@ -7,7 +7,7 @@ license = "GPL-3.0"
 name = "accumulator"
 readme = "README.md"
 repository = "https://github.com/maidsafe/accumulator"
-version = "0.6.0"
+version = "0.7.0"
 
 [dependencies]
 lru_time_cache = "~0.7.0"
