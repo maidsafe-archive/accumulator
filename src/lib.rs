@@ -63,7 +63,7 @@ impl<Key: PartialOrd + Ord + Clone, Value: Clone + Eq + Hash> Accumulator<Key, V
     /// `quorum` defines the count at and above which [`add()`](#method.add) will return `Some()`.
     pub fn with_capacity(quorum: usize, capacity: usize) -> Accumulator<Key, Value> {
         Accumulator {
-            quorum: quorum,
+            quorum,
             lru_cache: LruCache::with_capacity(capacity),
         }
     }
@@ -73,7 +73,7 @@ impl<Key: PartialOrd + Ord + Clone, Value: Clone + Eq + Hash> Accumulator<Key, V
     /// `quorum` defines the count at and above which [`add()`](#method.add) will return `Some()`.
     pub fn with_duration(quorum: usize, duration: Duration) -> Accumulator<Key, Value> {
         Accumulator {
-            quorum: quorum,
+            quorum,
             lru_cache: LruCache::with_expiry_duration(duration),
         }
     }
