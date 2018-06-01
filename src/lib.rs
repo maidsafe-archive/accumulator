@@ -15,24 +15,31 @@
 //! When adding (accumulating) values under a given key, once a predefined quorum count has been
 //! reached, the function will thereafter return all the accumulated values for that particular key.
 
-#![doc(html_logo_url =
-           "https://raw.githubusercontent.com/maidsafe/QA/master/Images/maidsafe_logo.png",
-       html_favicon_url = "https://maidsafe.net/img/favicon.ico",
-       html_root_url = "https://docs.rs/accumulator")]
-
+#![doc(
+    html_logo_url = "https://raw.githubusercontent.com/maidsafe/QA/master/Images/maidsafe_logo.png",
+    html_favicon_url = "https://maidsafe.net/img/favicon.ico",
+    html_root_url = "https://docs.rs/accumulator"
+)]
 // For explanation of lint checks, run `rustc -W help` or see
 // https://github.com/maidsafe/QA/blob/master/Documentation/Rust%20Lint%20Checks.md
-#![forbid(bad_style, exceeding_bitshifts, mutable_transmutes, no_mangle_const_items,
-          unknown_crate_types, warnings)]
-#![deny(deprecated, improper_ctypes, missing_docs,
-        non_shorthand_field_patterns, overflowing_literals, plugin_as_library,
-        private_no_mangle_fns, private_no_mangle_statics, stable_features, unconditional_recursion,
-        unknown_lints, unsafe_code, unused, unused_allocation, unused_attributes,
-        unused_comparisons, unused_features, unused_parens, while_true)]
-#![warn(trivial_casts, trivial_numeric_casts, unused_extern_crates, unused_import_braces,
-        unused_qualifications, unused_results)]
-#![allow(box_pointers, missing_copy_implementations,
-         missing_debug_implementations, variant_size_differences)]
+#![forbid(
+    bad_style, exceeding_bitshifts, mutable_transmutes, no_mangle_const_items, unknown_crate_types,
+    warnings
+)]
+#![deny(
+    deprecated, improper_ctypes, missing_docs, non_shorthand_field_patterns, overflowing_literals,
+    plugin_as_library, private_no_mangle_fns, private_no_mangle_statics, stable_features,
+    unconditional_recursion, unknown_lints, unsafe_code, unused, unused_allocation,
+    unused_attributes, unused_comparisons, unused_features, unused_parens, while_true
+)]
+#![warn(
+    trivial_casts, trivial_numeric_casts, unused_extern_crates, unused_import_braces,
+    unused_qualifications, unused_results
+)]
+#![allow(
+    box_pointers, missing_copy_implementations, missing_debug_implementations,
+    variant_size_differences
+)]
 
 #[cfg(test)]
 extern crate rand;
@@ -63,7 +70,7 @@ impl<Key: PartialOrd + Ord + Clone, Value: Clone + Eq + Hash> Accumulator<Key, V
     /// `quorum` defines the count at and above which [`add()`](#method.add) will return `Some()`.
     pub fn with_capacity(quorum: usize, capacity: usize) -> Accumulator<Key, Value> {
         Accumulator {
-            quorum: quorum,
+            quorum,
             lru_cache: LruCache::with_capacity(capacity),
         }
     }
@@ -73,7 +80,7 @@ impl<Key: PartialOrd + Ord + Clone, Value: Clone + Eq + Hash> Accumulator<Key, V
     /// `quorum` defines the count at and above which [`add()`](#method.add) will return `Some()`.
     pub fn with_duration(quorum: usize, duration: Duration) -> Accumulator<Key, Value> {
         Accumulator {
-            quorum: quorum,
+            quorum,
             lru_cache: LruCache::with_expiry_duration(duration),
         }
     }
@@ -276,9 +283,9 @@ mod test {
         }
 
         for count in 0..1000 {
-            let responses = accumulator.get(&count).expect(
-                "entry `count` does not exist",
-            );
+            let responses = accumulator
+                .get(&count)
+                .expect("entry `count` does not exist");
             assert_eq!(responses.len(), 1);
             assert!(responses.contains(&1));
         }
@@ -293,9 +300,9 @@ mod test {
             assert_eq!(accumulator.contains_key(&count), true);
             assert_eq!(accumulator.is_quorum_reached(&count), false);
 
-            let responses = accumulator.get(&count).expect(
-                "entry `count` does not exist",
-            );
+            let responses = accumulator
+                .get(&count)
+                .expect("entry `count` does not exist");
 
             assert_eq!(responses.len(), 1);
             assert!(responses.contains(&1));
