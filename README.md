@@ -1,7 +1,5 @@
 # Accumulator
 
-**Maintainer:** Andreas Fackler (andreas.fackler@maidsafe.net)
-
 |Crate|Documentation|Linux/OS X|Windows|Issues|
 |:---:|:-----------:|:--------:|:-----:|:----:|
 |[![](http://meritbadge.herokuapp.com/accumulator)](https://crates.io/crates/accumulator)|[![Documentation](https://docs.rs/accumulator/badge.svg)](https://docs.rs/accumulator)|[![Build Status](https://travis-ci.org/maidsafe/accumulator.svg?branch=master)](https://travis-ci.org/maidsafe/accumulator)|[![Build status](https://ci.appveyor.com/api/projects/status/1imtexgsshnpxnvn/branch/master?svg=true)](https://ci.appveyor.com/project/MaidSafe-QA/accumulator/branch/master)|[![Stories in Ready](https://badge.waffle.io/maidsafe/accumulator.png?label=ready&title=Ready)](https://waffle.io/maidsafe/accumulator)|
