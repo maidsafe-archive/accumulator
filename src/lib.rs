@@ -67,9 +67,6 @@
 #[cfg(test)]
 extern crate rand;
 
-// MaidSafe crates
-extern crate lru_time_cache;
-
 use lru_time_cache::LruCache;
 use std::collections::HashSet;
 use std::hash::Hash;
