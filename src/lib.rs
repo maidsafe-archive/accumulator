@@ -37,8 +37,6 @@
     non_shorthand_field_patterns,
     overflowing_literals,
     plugin_as_library,
-    private_no_mangle_fns,
-    private_no_mangle_statics,
     stable_features,
     unconditional_recursion,
     unknown_lints,
@@ -68,9 +66,6 @@
 
 #[cfg(test)]
 extern crate rand;
-
-// MaidSafe crates
-extern crate lru_time_cache;
 
 use lru_time_cache::LruCache;
 use std::collections::HashSet;
